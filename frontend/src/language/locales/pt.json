@@ -523,69 +523,260 @@
   },
 
   "fixtures": {
-  "adminOnly": "Apenas administradores podem gerir partidas e calendário.",
-  "title": "Partidas e calendário",
-  "description": "Agende as próximas partidas da sua federação. Essas partidas alimentam o cartão de \"Próxima partida\" no painel e podem ser usadas nas ferramentas de planejamento.",
-  "addFixtureTitle": "Adicionar partida",
+    "adminOnly": "Apenas administradores podem gerir partidas e calendário.",
+    "title": "Partidas e calendário",
+    "description": "Agende as próximas partidas da sua federação. Essas partidas alimentam o cartão de \"Próxima partida\" no painel e podem ser usadas nas ferramentas de planejamento.",
+    "addFixtureTitle": "Adicionar partida",
 
 
-  "errors": {
-    "loadFixtures": "Não foi possível carregar as partidas.",
-    "loadOpponents": "Não foi possível carregar as equipes adversárias.",
-    "loadTournaments": "Não foi possível carregar os torneios.",
-    "createFixture": "Não foi possível criar a partida.",
-    "addOpponent": "Não foi possível adicionar a equipe adversária.",
-    "addTournament": "Não foi possível adicionar o torneio."
+    "errors": {
+      "loadFixtures": "Não foi possível carregar as partidas.",
+      "loadOpponents": "Não foi possível carregar as equipes adversárias.",
+      "loadTournaments": "Não foi possível carregar os torneios.",
+      "createFixture": "Não foi possível criar a partida.",
+      "addOpponent": "Não foi possível adicionar a equipe adversária.",
+      "addTournament": "Não foi possível adicionar o torneio."
+    },
+
+    "validation": {
+      "dateAndOpponent": "Selecione uma data e uma equipe adversária."
+    },
+
+    "prompts": {
+      "addOpponent": "Digite o nome do país adversário",
+      "addTournament": "Digite o nome do torneio"
+    },
+
+    "labels": {
+      "date": "Data",
+      "opponent": "Adversário",
+      "tournament": "Torneio",
+      "timeOfDay": "Período do dia",
+      "ground": "Campo / local"
+    },
+
+    "buttons": {
+      "addOpponent": "+ Adicionar nova equipe",
+      "addTournament": "+ Adicionar novo torneio",
+      "addFixture": "Adicionar partida",
+      "saving": "Salvando..."
+    },
+
+    "placeholders": {
+      "loadingTeams": "Carregando equipes...",
+      "selectOpponent": "Selecione o adversário",
+      "loadingTournaments": "Carregando torneios...",
+      "selectTournamentOptional": "Opcional: selecione um torneio"
+    },
+
+    "upcomingTitle": "Próximas partidas",
+    "loadingFixtures": "Carregando…",
+    "noUpcoming": "Ainda não há partidas agendadas.",
+    "unknownMonth": "Desconhecido",
+    "tbc": "A definir",
+    "vs": "vs",
+    "at": "@",
+
+    "timeOfDay": {
+      "day": "Dia",
+      "dayNight": "Dia/Noite",
+      "night": "Noite"
+    },
+
+    "footerNote": "À medida que você adiciona partidas aqui, o painel sempre saberá o que vem a seguir."
   },
-
-  "validation": {
-    "dateAndOpponent": "Selecione uma data e uma equipe adversária."
+  "matchAnalysis": {
+    "title": "Análise da partida",
+    "subtitle": "Escolha um torneio e uma partida envolvendo sua equipe, depois use as abas abaixo para explorar o jogo.",
+    "teamLabel": "Equipe",
+    "loadingMatches": "Carregando partidas…",
+    "noMatches": "Nenhuma partida encontrada para esta equipe ainda. Quando as partidas forem registradas, você poderá analisá-las aqui.",
+    "tournamentLabel": "Torneio",
+    "tournamentPlaceholder": "Todos os torneios",
+    "matchLabel": "Partida",
+    "matchPlaceholder": "Selecione uma partida",
+    "noMatchesForTournament": "Ainda não há partidas para este torneio.",
+    "selectedMatchLabel": "Partida selecionada",
+    "selectMatchHint": "Selecione uma partida acima para ver scorecards, gráficos de pressão, parcerias e relatórios.",
+    "tabs": {
+      "scorecard": "Scorecard",
+      "matchReport": "Relatório da partida",
+      "detailedMatch": "Partida detalhada",
+      "partnerships": "Parcerias",
+      "pressure": "Análise de pressão",
+      "report": "Relatório da partida"
+    }
   },
-
-  "prompts": {
-    "addOpponent": "Digite o nome do país adversário",
-    "addTournament": "Digite o nome do torneio"
+  "matchScorecard": {
+    "selectMatchHint": "Selecione uma partida acima para ver o scorecard completo.",
+    "loading": "Carregando scorecard…",
+    "error": "Houve um problema ao carregar este scorecard.",
+    "noData": "Ainda não há dados de scorecard disponíveis para esta partida.",
+    "inningsNotAvailable": "Esta entrada ainda não começou.",
+    "inningsLabel": "Entrada",
+    "battingHeading": "Batting",
+    "bowlingHeading": "Bowling",
+    "colBatter": "Batedor",
+    "colFielder": "Fielder",
+    "colBowler": "Bowler",
+    "colRuns": "R",
+    "colBalls": "B",
+    "colFours": "4s",
+    "colSixes": "6s",
+    "colSr": "SR",
+    "colOvers": "O",
+    "colDots": "Dots",
+    "colWickets": "W",
+    "colEcon": "Econ",
+    "colWides": "WD",
+    "colNoBalls": "NB",
+    "notOutLabel": "not out",
+    "extrasLabel": "Extras",
+    "fowLabel": "Queda de wickets",
+    "totalLabel": "Total",
+    "inOvers": "em",
+    "oversSuffix": "overs",
+    "playerDetailRunBreakdown": "Distribuição de corridas",
+    "playerDetailScoringPct": "Scoring shot %",
+    "playerDetailIntent": "Intenção média",
+    "playerDetailWagonWheel": "Wagon wheel",
+    "bowlerDetailSummary": "Resumo do bowling",
+    "bowlerDetailRuns": "Corridas cedidas",
+    "bowlerDetailRealRuns": "Corridas reais cedidas",
+    "bowlerDetailChances": "Chances criadas",
+    "bowlerDetailWickets": "Wickets",
+    "bowlerDetailRealWickets": "Wickets reais",
+    "bowlerDetailRealEcon": "Economy real",
+    "bowlerDetailRealSr": "Strike rate real",
+    "bowlerDetailPitchMap": "Pitch map",
+    "resultLabel": "Resultado"
   },
-
-  "labels": {
-    "date": "Data",
-    "opponent": "Adversário",
-    "tournament": "Torneio",
-    "timeOfDay": "Período do dia",
-    "ground": "Campo / local"
+  "detailedMatch": {
+    "selectMatchHint": "Selecione uma partida acima para ver a análise detalhada over a over.",
+    "loading": "Carregando dados detalhados da partida…",
+    "error": "Houve um problema ao carregar esta partida.",
+    "noData": "Ainda não há dados detalhados disponíveis para esta partida.",
+    "manhattanTitle": "Corridas por over (com wickets)",
+    "noOverData": "Não há dados por over disponíveis para esta partida.",
+    "noOverDataInnings": "Não há dados por over para esta entrada.",
+    "runsShort": "Corridas",
+    "wicketsShort": "Wkts",
+    "rrTitle": "Comparação de run rate",
+    "phaseTitle": "Resumo por fases",
+    "noPhaseData": "Não há dados de fases disponíveis para esta partida.",
+    "colPhase": "Fase",
+    "colTeamA": "Equipe A",
+    "colTeamB": "Equipe B",
+    "phasePowerplay": "Powerplay",
+    "phaseMiddle": "Middle overs",
+    "phaseDeath": "Death overs",
+    "phaseRunsLabel": "corrida(s)",
+    "phaseWicketsLabel": "wicket(s)",
+    "phaseScoringShotPct": "Scoring shot %",
+    "ballByBallTitle": "Resumo bola a bola",
+    "noBallByBall": "Não há dados bola a bola disponíveis para esta partida.",
+    "noBallByBallInnings": "Nenhuma entrega registrada para esta entrada.",
+    "colOver": "Over",
+    "colBatter": "Batedor",
+    "colBowler": "Bowler",
+    "colRuns": "Corridas",
+    "colExtras": "Extras",
+    "colNotes": "Observações",
+    "colTeam": "Equipe",
+    "colWickets": "Wkts",
+    "colPhaseSummary": "RR • Dot% • 4/6%",
+    "innings1Label": "1ª entrada",
+    "innings2Label": "2ª entrada",
+    "inningsLabelShort": "Entr.",
+    "btnBallByBall": "Bola a Bola",
+    "btnBallByBallSub": "Análise de cada bola",
+    "btnWagonWheels": "Wagon Wheels da Partida",
+    "btnWagonWheelsSub": "Wagon wheels das duas equipes",
+    "btnPitchMaps": "Pitch Maps da Partida",
+    "btnPitchMapsSub": "Pitch maps das duas equipes",
+    "wagonTitle": "Wagon Wheels da Partida",
+    "wagonPlaceholder": "A visualização de wagon wheel da partida aparecerá aqui.",
+    "pitchTitle": "Pitch Maps da Partida",
+    "pitchPlaceholder": "A visualização de pitch map da partida aparecerá aqui.",
+    "overLabel": "Over",
+    "phaseWicketsShort": "Wicket(s)",
+    "noWicketsOver": "0 Wickets",
+    "runsOffBatShort": "Bat",
+    "extrasLabel": "Extras",
+    "extrasWide": "Wide",
+    "extrasNoBall": "No ball",
+    "extrasByes": "Byes",
+    "extrasLegByes": "Leg byes",
+    "extrasPenalty": "Penalty",
+    "noExtrasShort": "Sem extras",
+    "boundaryNote": "Boundary",
+    "unknownBatter": "Batedor",
+    "moreDetails": "Mais detalhes",
+    "pitchMapSingle": "Pitch map",
+    "wagonSingle": "Wagon wheel",
+    "noPitchForBall": "Nenhuma localização de pitch registrada para esta bola.",
+    "noWagonForBall": "Nenhuma localização de wagon wheel registrada para esta bola.",
+    "shotTypeLabel": "Tipo de golpe",
+    "footworkLabel": "Footwork",
+    "shotSelectionLabel": "Seleção de golpe",
+    "deliveryTypeLabel": "Tipo de entrega",
+    "aerialLabel": "Aérea",
+    "edgedLabel": "Edge",
+    "edgedYes": "Sim",
+    "missedLabel": "Erro",
+    "missedYes": "Sim",
+    "cleanHitLabel": "Contato limpo",
+    "cleanHitYes": "Meio do bastão",
+    "expectedRunsLabel": "Corridas esperadas",
+    "expectedWicketLabel": "Valor esperado de wicket",
+    "intentLabel": "Pontuação de intenção",
+    "battingBPILabel": "BPI de batting",
+    "bowlingBPILabel": "BPI de bowling",
+    "closeBallModal": "Fechar",
+    "wagonSubTitle": "Wagon wheels lado a lado para cada entrada",
+    "wagonInningsHeader": "{{team}} – {{inningsLabel}}",
+    "wagonNoData": "Não há dados de wagon wheel disponíveis para esta partida.",
+    "wagonNoDataInnings": "Não há dados de wagon wheel registrados para esta entrada.",
+    "wagonSubtitle": "Visualizando zonas de pontuação para cada entrada",
+    "pitchSubTitle": "Pitch maps lado a lado para cada entrada",
+    "pitchInningsHeader": "{{team}} – {{inningsLabel}}",
+    "pitchNoData": "Não há dados de pitch map disponíveis para esta partida.",
+    "pitchNoDataInnings": "Não há dados de pitch map registrados para esta entrada.",
+    "pitchModeDots": "Mapa de pontos",
+    "pitchModeHeat": "Mapa de calor",
+    "pitchSubtitle": "Bolas lançadas em cada entrada de batting"
   },
-
-  "buttons": {
-    "addOpponent": "+ Adicionar nova equipe",
-    "addTournament": "+ Adicionar novo torneio",
-    "addFixture": "Adicionar partida",
-    "saving": "Salvando..."
+  "matchReport": {
+    "description": "Gere relatórios detalhados em PDF para jogadores ou equipes inteiras usando dados reais da partida.",
+    "teamLabel": "Equipe",
+    "teamPlaceholder": "Selecione uma equipe",
+    "playerLabel": "Jogador",
+    "loadingPlayers": "Carregando jogadores…",
+    "playerPlaceholder": "Selecione um jogador",
+    "playerReportButton": "Relatório do jogador",
+    "teamReportButton": "Relatório da equipe"
   },
-
-  "placeholders": {
-    "loadingTeams": "Carregando equipes...",
-    "selectOpponent": "Selecione o adversário",
-    "loadingTournaments": "Carregando torneios...",
-    "selectTournamentOptional": "Opcional: selecione um torneio"
+  "partnerships": {
+    "description": "Analise parcerias de batting por wicket, corridas e bolas. Clique em uma parceria para ver um wagon wheel e um resumo.",
+    "inningsLabel": "Entrada",
+    "inningsShort": "Entr.",
+    "wicketLabel": "Wicket",
+    "partnershipLabel": "Parceria:",
+    "runs": "corridas",
+    "balls": "bolas",
+    "noData": "Não há dados de parcerias disponíveis para esta entrada."
   },
-
-  "upcomingTitle": "Próximas partidas",
-  "loadingFixtures": "Carregando…",
-  "noUpcoming": "Ainda não há partidas agendadas.",
-  "unknownMonth": "Desconhecido",
-  "tbc": "A definir",
-  "vs": "vs",
-  "at": "@",
-
-  "timeOfDay": {
-    "day": "Dia",
-    "dayNight": "Dia/Noite",
-    "night": "Noite"
-  },
-
-  "footerNote": "À medida que você adiciona partidas aqui, o painel sempre saberá o que vem a seguir."
-}
-
+  "pressure": {
+    "description": "Explore a pressão de batting, a pressão de bowling e o momentum em cada over da partida. Os wickets são marcados com símbolos ❌.",
+    "battingPressure": "Pressão de batting",
+    "bowlingPressure": "Pressão de bowling",
+    "momentum": "Momentum",
+    "totalMomentum": "Momentum total",
+    "oversLabel": "Overs",
+    "indexLabel": "Índice de pressão",
+    "battingLabel": "batting",
+    "noData": "Não há dados de momentum disponíveis para esta partida."
+  }
 
 
 }
