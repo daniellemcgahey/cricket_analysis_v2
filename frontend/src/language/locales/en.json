@@ -1,0 +1,811 @@
+{
+  "languageName": "English",
+
+  "settings": "Settings",
+  "language": "Language",
+  "theme": "Theme",
+  "units": "Units",
+  "save": "Save",
+  "open": "Open",
+  "close": "Close",
+
+  "categories": {
+    "Men": "Men",
+    "Women": "Women",
+    "U19 Men": "U19 Men",
+    "U19 Women": "U19 Women",
+    "Training": "Training"
+  },
+
+  "tabs": {
+    "Batting": "Batting",
+    "Bowling": "Bowling",
+    "Fielding": "Fielding",
+    "Powerplay": "Powerplay",
+    "Middle Overs": "Middle Overs",
+    "Death Overs": "Death Overs",
+    "Match": "Match"
+  },
+
+  "interactiveField": "Interactive Field",
+  "back": "Back",
+  "coachesHub": "Coaches Hub",
+
+  "common": {
+    "loading": "Loading…",
+    "cancel": "Cancel",
+    "close": "Close",
+    "selectAll": "Select all",
+    "comingSoon": "Coming soon",
+
+    "player": "Player",
+    "runs": "Runs",
+    "balls": "Balls",
+    "overs": "Overs",
+    "wicketsShort": "Wkts",
+    "econ": "Eco",
+    "sr": "SR",
+    "avg": "Avg"
+  },
+
+  "home": {
+    "dashboardLabel": "Dashboard",
+    "heroDescription": "Quick access to your next fixture, last match review, and key performance areas.",
+    "teamFlagAlt": "Team flag",
+    "modeLabel": "Mode:",
+    "modeCoaching": "Coaching",
+
+    "nextFixtureTitle": "Next Fixture",
+    "matchPreparationTitle": "Match Preparation",
+    "nextFixtureLoading": "Checking your schedule…",
+    "noUpcomingFixtures": "No upcoming fixtures are scheduled yet. Once fixtures are added, the next game will appear here automatically.",
+    "nextFixtureDescription": "Use the pre-game tools to plan matchups, key messages and roles before this fixture.",
+    "goToCoachesHubButton": "Go to Coaches Hub",
+    "vs": "vs",
+    "dateTbc": "Date TBC",
+
+    "lastFixtureTitle": "Last Fixture",
+    "lastFixtureDescription": "Review key batting, bowling and fielding metrics, then clip out what you want to show the group.",
+    "viewMatchAnalysisButton": "View match analysis",
+
+    "quickLinksTitle": "Quick Links",
+    "quickLinkCoachesHub": "Coaches Hub",
+    "quickLinkPlayerAnalysis": "Player analysis (coming soon)",
+    "quickLinkTournamentSummary": "Tournament summary (coming soon)",
+    "quickLinksFooter": "We’ll grow this dashboard as we build out the matches, players, and tournaments sections in v2.",
+
+    "usLabel": "Us:",
+    "themLabel": "Them:"
+  },
+
+  "coaches": {
+    "title": "Coaches Hub",
+
+    "iccToggleShowTrend": "Ranking/Rating Trend",
+    "iccToggleShowOverview": "ICC Rating Overview",
+    "updateRankingButton": "Update ICC Ranking",
+    "trendCardTitle": "ICC Ranking & Rating Trend (2 Years)",
+    "rankLabel": "Rank",
+    "ratingLabel": "Rating",
+
+    "kpiIccRank": "ICC Rank",
+    "kpiRating": "Rating",
+    "kpiMatchesCounted": "Matches Counted",
+    "kpiPoints": "Points",
+    "kpiWinPct": "Win %",
+    "kpiAvgRunsFor": "Avg Runs For",
+    "kpiAvgRunsAgainst": "Avg Runs Against",
+    "kpiMatchesPlayed": "Matches Played",
+
+    "performanceToolsTitle": "Performance Tools",
+    "toolPreGame": "Pre-Game Analysis",
+    "toolPostGame": "Post-Game Breakdown",
+    "toolPostTournament": "Post-Tournament Breakdown",
+    "toolTraining": "Training Tools"
+  },
+
+  "pregame": {
+    "title": "Pre-Game Analysis",
+
+    "fields": {
+      "opposition": "Opposition"
+    },
+
+    "placeholders": {
+      "selectOpposition": "Select opposition"
+    },
+
+    "labels": {
+      "matchup": "Matchup:",
+      "selectOppositionToUnlockTools": "Select an opposition to unlock tools",
+      "toolsUnlockOnceDifferentOpposition": "Tools unlock once you choose a different opposition."
+    },
+
+    "alerts": {
+      "chooseValidOpposition": "Please choose a valid opposition (different from your own team).",
+      "selectAtLeastOneOppositionBatter": "Select at least one opposition batter.",
+      "selectAtLeastOneOurBowler": "Select at least one of our bowlers.",
+      "selectGround": "Please select a ground."
+    },
+
+    "errors": {
+      "couldNotLoadCountries": "Could not load countries.",
+      "couldNotLoadOpponentPlayers": "Could not load opponent players.",
+      "couldNotLoadOurBowlers": "Could not load our bowlers.",
+      "couldNotGenerateGamePlanPdf": "Could not generate Game Plan PDF.",
+      "failedToLoadVenues": "Failed to load venues.",
+      "failedToLoadInsights": "Failed to load insights.",
+      "failedToLoadKeyOppositionPlayers": "Failed to load key opposition players.",
+      "failedToLoadStrengthsWeaknesses": "Failed to load strengths & weaknesses.",
+      "couldNotComputeBattingTargets": "Could not compute batting targets."
+    },
+
+    "cards": {
+      "gamePlan": {
+        "title": "Game Plan (PDF)",
+        "description": "Matchups, recommended zones, and phase plans. Generated as a coach-ready PDF for pre-game meetings.",
+        "button": "Select lineups & generate"
+      },
+      "keyOpposition": {
+        "title": "Key Opposition Players",
+        "description": "Top three with the bat (SR / Avg) and ball (wickets / economy), built from your tournament database.",
+        "button": "View shortlist"
+      },
+      "battingTargets": {
+        "title": "Batting Targets",
+        "description": "Venue- and opponent-adjusted par score, target total, and phase-by-phase run breakdown.",
+        "button": "Configure & compute"
+      },
+      "venueToss": {
+        "title": "Venue & Toss Insights",
+        "description": "Ground scoring trends, first-innings averages, and toss patterns by time of day.",
+        "button": "Select ground"
+      },
+      "strengthsWeaknesses": {
+        "title": "Strengths & Weaknesses",
+        "description": "Opposition batting and bowling trends by phase and style: scoring patterns, dot-ball rates, and dismissals.",
+        "button": "Open report"
+      },
+      "doDonts": {
+        "title": "Do & Don’ts",
+        "description": "High-signal briefing for players: what to lean into, what to avoid. (Endpoint can be wired in later.)"
+      }
+    },
+
+    "modals": {
+      "gamePlan": {
+        "title": "Game Plan — Select Lineups",
+        "oppositionBatters": "Opposition Batters",
+        "noPlayers": "No players",
+        "selectTop6": "Select top 6",
+        "battersAccordion": "Batters",
+        "ourBowlers": "Our Bowlers",
+        "noBowlers": "No bowlers",
+        "bowlersAccordion": "Bowlers",
+        "generatePdfButton": "Generate PDF"
+      },
+
+      "venueToss": {
+        "title": "Venue & Toss Insights",
+        "groundLabel": "Ground",
+        "timeOfDayLabel": "Time of Day (optional)",
+        "timeOfDayAny": "Any",
+        "showInsightsButton": "Show insights",
+        "avgFirstInningsScore": "Avg 1st-innings score",
+        "winRateBattingFirst": "Win rate batting first",
+        "mostCommonTossDecision": "Most common toss decision",
+        "tossDistributionLabel": "Toss decisions:"
+      },
+
+      "keyOpposition": {
+        "title": "Key Opposition Players",
+        "topBattersHeading": "Top Batters (Strike Rate • Average)",
+        "topBowlersHeading": "Top Bowlers (Wickets • Economy)",
+        "noQualifiedBatters": "No qualified batters",
+        "noQualifiedBowlers": "No qualified bowlers"
+      },
+
+      "strengthsWeaknesses": {
+        "title": "Opposition Strengths & Weaknesses",
+        "battingStrengths": "Batting — Key Strengths",
+        "battingWeaknesses": "Batting — Key Weaknesses",
+        "bowlingStrengths": "Bowling — Key Strengths",
+        "bowlingWeaknesses": "Bowling — Key Weaknesses",
+        "detailBattingByStyle": "Detail — Batting by Bowler Type",
+        "detailBattingByPhase": "Detail — Batting by Phase",
+        "detailBowlingByPhase": "Detail — Bowling by Phase",
+        "detailBowlingByType": "Detail — Bowling by Type"
+      },
+
+      "battingTargets": {
+        "title": "Batting Targets — Venue & Opponent Adjusted",
+        "groundLabel": "Ground",
+        "timeOfDayLabel": "Time of Day (optional)",
+        "timeOfDayAny": "Any",
+        "recencyWindowLabel": "Recency window (days)",
+        "includeRainLabel": "Include rain / DLS",
+        "computeButton": "Compute targets",
+        "venuePar": "Venue par (20 overs)",
+        "adjustedPar": "Adjusted par (opponent & us)",
+        "targetTotal": "Target total (+10% buffer)",
+        "phaseTargetsHeading": "Phase Targets",
+        "rpo": "RPO"
+      },
+
+      "common": {
+        "type": "Type",
+        "balls": "Balls",
+        "dotPct": "Dot %",
+        "boundaryPct": "Boundary %",
+        "outsPerBall": "Outs per ball",
+        "phase": "Phase",
+        "overs": "Overs",
+        "runs": "Runs",
+        "wicketsPerBall": "Wkts per ball"
+      }
+    }
+  },
+
+  "postGame": {
+    "filters": {
+      "categoryLabel": "Category",
+      "matchBrasilLabel": "Match (Brasil only)",
+      "noBrasilMatches": "No Brasil matches found"
+    },
+    "alerts": {
+      "selectMatchWithBrasil": "Please select a match that includes Brasil.",
+      "selectMatch": "Please select a match first."
+    },
+    "errors": {
+      "matchesLoad": "Could not load matches.",
+      "kpisLoad": "Failed to load KPIs for this match.",
+      "teamsLoad": "Failed to load teams for this match.",
+      "playersLoad": "Failed to load players for this team.",
+      "playerSummaryLoad": "Failed to load player summary."
+    },
+    "cards": {
+      "matchKpisTitle": "Match KPIs",
+      "matchKpisDescription": "Batting, bowling and fielding KPIs — split by Powerplay, Middle Overs, Death Overs and overall match.",
+      "playerSummaryTitle": "Player Summary",
+      "playerSummaryDescription": "Quick batting, bowling and fielding snapshot for any player in this match."
+    },
+    "kpiModal": {
+      "title": "KPIs — Targets vs Results",
+      "kpisMetLabel": "KPIs Met",
+      "showFailedOnlyLabel": "Show failed only",
+      "metShort": "met",
+      "noKpisSection": "No KPIs in this section.",
+      "tableHeaderKpi": "KPI",
+      "tableHeaderTarget": "Target",
+      "tableHeaderResult": "Result",
+      "tableHeaderStatus": "Status",
+      "statusMet": "Met",
+      "statusMissed": "Missed",
+      "statusNA": "N/A"
+    },
+    "batting": {
+      "scoreSectionTitle": "Score",
+      "runsBallsLabel": "Runs (Balls)",
+      "strikeRateLabel": "Strike Rate",
+      "strikeRateSub": "Runs per 100 balls",
+      "foursSixesLabel": "4s / 6s",
+      "scoringShotsSectionTitle": "Scoring Shots",
+      "scoringShotPctLabel": "Scoring Shot %",
+      "boundaryPctLabel": "Boundary %",
+      "boundaryPctSub": "4s + 6s as % of balls faced",
+      "phasesSectionTitle": "Phases",
+      "dismissalSectionTitle": "Dismissal"
+    },
+    "bowling": {
+      "noData": "No bowling data for this player in this match.",
+      "figuresSectionTitle": "Figures",
+      "figuresLabel": "Overs–Dots–Runs–Wickets",
+      "economyLabel": "Economy",
+      "economySub": "Runs conceded per over",
+      "dotBallPctLabel": "Dot Ball %",
+      "dotBallPctSub": "Dots as % of legal balls",
+      "extrasSectionTitle": "Extras & Boundaries",
+      "widesLabel": "Wides",
+      "noBallsLabel": "No Balls",
+      "boundaryBallsLabel": "Boundary Balls",
+      "phasesSectionTitle": "Phases"
+    },
+    "fielding": {
+      "noData": "No fielding data for this player in this match.",
+      "involvementSectionTitle": "Involvement",
+      "ballsFieldedLabel": "Balls Fielded",
+      "cleanPickupsLabel": "Clean Pickups",
+      "fumblesLabel": "Fumbles",
+      "overthrowsConcededLabel": "Overthrows Conceded",
+      "catchingSectionTitle": "Catching & Run Outs",
+      "catchesTakenLabel": "Catches Taken",
+      "dropsLabel": "Drops / Missed Catches",
+      "runOutsDirectLabel": "Run Outs (Direct)",
+      "runOutsAssistLabel": "Run Outs (Assist)",
+      "qualitySectionTitle": "Quality",
+      "cleanHandsPctLabel": "Clean Hands %",
+      "chanceConversionPctLabel": "Chance Conversion %"
+    },
+    "common": {
+      "runsWord": "runs",
+      "ballsWord": "balls",
+      "scoringShotsWord": "scoring shots",
+      "dotBallsWord": "dot balls"
+    },
+    "player": {
+      "noBattingData": "No batting data for this player in this match.",
+      "noBowlingData": "No bowling data for this player in this match.",
+      "noFieldingData": "No fielding data for this player in this match."
+    },
+    "playerModal": {
+      "title": "Player Summary",
+      "teamLabel": "Team",
+      "playerLabel": "Player",
+      "noTeamsFound": "No teams found",
+      "noPlayersFound": "No players found",
+      "playerHeading": "Player",
+      "teamHeading": "Team",
+      "selectPrompt": "Select a team and player to see their summary."
+    }
+  },
+
+  "postTournament": {
+    "filters": {
+      "categoryLabel": "Category",
+      "tournamentLabel": "Tournament",
+      "teamLabel": "Team",
+      "playerLabel": "Player",
+      "noTournaments": "No tournaments found",
+      "noTeams": "No teams",
+      "noPlayers": "No players"
+    },
+    "errors": {
+      "tournamentsLoad": "Could not load tournaments for this category.",
+      "teamsLoad": "Could not load teams for this tournament.",
+      "playersLoad": "Could not load players for this team.",
+      "playerSummaryLoad": "Could not load player tournament summary.",
+      "teamSummaryLoad": "Could not load team tournament summary."
+    },
+    "cards": {
+      "playerSummaryTitle": "Player Tournament Summary",
+      "playerSummaryDescription": "Tournament-long batting, bowling and fielding snapshot for the selected player.",
+      "teamSummaryTitle": "Team Tournament Summary",
+      "teamSummaryDescription": "Tournament-long overview of batting, bowling, fielding and key leaders for the selected team."
+    },
+    "player": {
+      "modalTitle": "Player Tournament Summary",
+      "labels": {
+        "player": "Player",
+        "team": "Team"
+      },
+      "noBattingData": "No batting data for this player in this tournament.",
+      "noBowlingData": "No bowling data for this player in this tournament.",
+      "noFieldingData": "No fielding data for this player in this tournament.",
+      "selectPrompt": "Select a tournament, team & player above, then open this card again to see their tournament summary."
+    },
+    "teamSummary": {
+      "modalTitle": "Team Tournament Summary",
+      "selectTournamentAndTeamFirst": "Select a tournament and team first.",
+      "selectPrompt": "Select a tournament & team, then generate the summary.",
+      "selectPromptModal": "Select a tournament & team above, then open this card again to generate the summary.",
+      "overviewSectionTitle": "Overview",
+      "overviewMatchesLabel": "Matches",
+      "overviewWinsLabel": "Wins",
+      "overviewLossesLabel": "Losses",
+      "overviewNoResultLabel": "No Result",
+      "overviewWinPctLabel": "Win %",
+      "overviewRunRateForLabel": "Run Rate For",
+      "overviewNetRunRateLabel": "Net Run Rate"
+    },
+    "batting": {
+      "sectionTitle": "Team Batting",
+      "scoreSectionTitle": "Score (Tournament)",
+      "runsBallsLabel": "Runs (Balls)",
+      "strikeRateLabel": "Strike Rate",
+      "strikeRateSub": "Runs per 100 balls",
+      "foursSixesLabel": "4s / 6s",
+      "onesTwosThreesLabel": "1s / 2s / 3s",
+      "scoringShotsSectionTitle": "Scoring Shots",
+      "scoringShotPctLabel": "Scoring Shot %",
+      "boundaryPctLabel": "Boundary %",
+      "boundaryPctSub": "4s + 6s as % of balls faced",
+      "phasesSectionTitle": "Phases (Tournament)",
+      "matchSummarySectionTitle": "Tournament Summary (Match by Match)",
+      "runsPer20Label": "Runs Scored per 20 Overs",
+      "tableHeaderPhase": "Phase",
+      "tableHeaderRuns": "Runs",
+      "tableHeaderSsPctShort": "SS%",
+      "tableHeaderOvers": "Overs",
+      "tableHeaderRunRateShort": "RR",
+      "tableHeaderWickets": "Wickets"
+    },
+    "bowling": {
+      "sectionTitle": "Team Bowling",
+      "figuresSectionTitle": "Figures (Tournament)",
+      "figuresLabel": "Overs–Dots–Runs–Wickets",
+      "economyLabel": "Economy",
+      "economySub": "Runs conceded per over",
+      "dotBallPctLabel": "Dot Ball %",
+      "extrasSectionTitle": "Extras & Boundaries",
+      "phasesSectionTitle": "Phases (Tournament)",
+      "matchSummarySectionTitle": "Tournament Summary (Match by Match)",
+      "runsPer20ConcededLabel": "Runs Conceded per 20 Overs",
+      "economyRateLabel": "Economy Rate",
+      "dotBallPctTeamLabel": "Dot Ball %",
+      "tableHeaderPhase": "Phase",
+      "tableHeaderRunsConceded": "Runs",
+      "tableHeaderDotPctShort": "Dot %",
+      "tableHeaderOvers": "Overs",
+      "tableHeaderEconomyShort": "Eco",
+      "tableHeaderWicketsShort": "Wkts"
+    },
+    "fielding": {
+      "sectionTitleInvolvement": "Involvement (Tournament)",
+      "sectionTitleCatching": "Catching & Run Outs",
+      "sectionTitleQuality": "Quality",
+      "sectionTitleTeam": "Fielding",
+      "ballsFieldedLabel": "Balls Fielded",
+      "cleanPickupsLabel": "Clean Pickups",
+      "fumblesLabel": "Fumbles",
+      "overthrowsConcededLabel": "Overthrows Conceded",
+      "catchesTakenLabel": "Catches Taken",
+      "dropsLabel": "Drops / Missed Catches",
+      "runOutsDirectLabel": "Run Outs (Direct)",
+      "runOutsAssistLabel": "Run Outs (Assist)",
+      "cleanHandsPctLabel": "Clean Hands %",
+      "chanceConversionPctLabel": "Chance Conversion %",
+      "catchesLabel": "Catches",
+      "stumpingsLabel": "Stumpings",
+      "runOutsLabel": "Run Outs",
+      "dropsShortLabel": "Drops",
+      "missedRunOutsLabel": "Missed ROs",
+      "overthrowsLabel": "Overthrows",
+      "widesLabel": "Wides",
+      "noBallsLabel": "No Balls"
+    },
+    "leaders": {
+      "sectionTitle": "Leaders",
+      "battingHeading": "Batting",
+      "bowlingHeading": "Bowling",
+      "fieldingHeading": "Fielding",
+      "battingRunsSuffix": "runs",
+      "battingSrShort": "SR",
+      "bowlingWicketsSuffix": "wickets",
+      "bowlingEconShort": "Econ",
+      "fieldingCatchesShort": "catches",
+      "fieldingRunOutsShort": "ROs",
+      "fieldingStumpingsShort": "Stmps",
+      "noBattingLeaders": "No batting leaders yet.",
+      "noBowlingLeaders": "No bowling leaders yet.",
+      "noFieldingLeaders": "No fielding leaders yet."
+    }
+  },
+
+  "training": {
+    "interactiveFieldDescription": "Drag & drop players to set a field. Men/Women, PP/Middle/Death, soft rule checks, and PDF export.",
+    "savePdfButton": "Save PDF",
+    "bowlerNamePlaceholder": "Bowler name",
+    "bowlerLabel": "Bowler",
+    "dragFieldersTitle": "Drag fielders onto the ground",
+    "softRuleChecksTitle": "Soft Rule Checks",
+    "handHint": "Affects off/leg side",
+    "dragToPlaceHint": "Drag to place",
+    "rules": {
+      "outsideInnerPrefix": "Outside inner ring",
+      "offSideMinPrefix": "Min 4 on off side",
+      "legBehindPrefix": "Max 2 behind square (leg)"
+    }
+  },
+
+  "login": {
+    "appTitle": "Performance Hub",
+    "signInHeading": "Sign in",
+    "subtitle": "Use your team-issued account to access match data and analysis tools.",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "signInButton": "Sign in",
+    "signingInButton": "Signing in...",
+    "restrictedNote": "Access is restricted to team staff. Contact your board if you need an account."
+  },
+
+    "appShell": {
+    "navDashboard": "Dashboard",
+    "navCoachesHub": "Coaches Hub",
+    "roleAdmin": "Admin",
+    "roleUser": "User",
+    "fixturesAdmin": "Fixtures & calendar",
+    "settings": "Settings",
+    "kpis": "Key Performance Indicators",
+    "signOut": "Sign out"
+  },
+  "darkMode": {
+    "light": "Light",
+    "dark": "Dark"
+  },
+
+  "fixtures": {
+    "adminOnly": "Fixtures & calendar can only be managed by admins.",
+    "title": "Fixtures & playing calendar",
+    "description": "Schedule upcoming fixtures for your board. These fixtures will drive the “Next fixture” card on the dashboard, and can be used for planning tools.",
+    "addFixtureTitle": "Add fixture",
+
+
+    "errors": {
+      "loadFixtures": "Could not load fixtures.",
+      "loadOpponents": "Could not load opponent teams.",
+      "loadTournaments": "Could not load tournaments.",
+      "createFixture": "Could not create fixture.",
+      "addOpponent": "Could not add opponent team.",
+      "addTournament": "Could not add tournament."
+    },
+
+    "validation": {
+      "dateAndOpponent": "Please select a date and opponent."
+    },
+
+    "prompts": {
+      "addOpponent": "Enter new opponent country name",
+      "addTournament": "Enter new tournament name"
+    },
+
+    "labels": {
+      "date": "Date",
+      "opponent": "Opponent",
+      "tournament": "Tournament",
+      "timeOfDay": "Time of day",
+      "ground": "Ground / venue"
+    },
+
+    "buttons": {
+      "addOpponent": "+ Add new team",
+      "addTournament": "+ Add new tournament",
+      "addFixture": "Add fixture",
+      "saving": "Saving..."
+    },
+
+    "placeholders": {
+      "loadingTeams": "Loading teams...",
+      "selectOpponent": "Select opponent",
+      "loadingTournaments": "Loading tournaments...",
+      "selectTournamentOptional": "Optional: select tournament"
+    },
+
+    "upcomingTitle": "Upcoming fixtures",
+    "loadingFixtures": "Loading…",
+    "noUpcoming": "No upcoming fixtures scheduled yet.",
+    "unknownMonth": "Unknown",
+    "tbc": "TBC",
+    "vs": "vs",
+    "at": "@",
+
+    "timeOfDay": {
+      "day": "Day",
+      "dayNight": "Day/Night",
+      "night": "Night"
+    },
+
+    "footerNote": "As you add fixtures here, the dashboard will always know what’s coming next."
+  },
+
+  
+  "matchAnalysis": {
+    "title": "Match analysis",
+    "subtitle": "Choose a tournament and match involving your team, then use the tabs below to explore the game.",
+    "teamLabel": "Team",
+    "loadingMatches": "Loading matches…",
+    "noMatches": "No matches found for this team yet. Once matches are recorded, you’ll be able to analyse them here.",
+    "tournamentLabel": "Tournament",
+    "tournamentPlaceholder": "All tournaments",
+    "matchLabel": "Match",
+    "matchPlaceholder": "Select a match",
+    "noMatchesForTournament": "No matches for this tournament yet.",
+    "selectedMatchLabel": "Selected match",
+    "selectMatchHint": "Select a match above to see scorecards, pressure graphs, partnerships and reports.",
+    "tabs": {
+      "scorecard": "Scorecard",
+      "matchReport": "Match report",
+      "detailedMatch": "Detailed match",
+      "partnerships": "Partnerships",
+      "pressure": "Pressure analysis",
+      "report": "Match Report"
+    }
+  },
+
+  "matchScorecard": {
+    "selectMatchHint": "Select a match above to view the full scorecard.",
+    "loading": "Loading scorecard…",
+    "error": "There was a problem loading this scorecard.",
+    "noData": "No scorecard data available for this match yet.",
+    "inningsNotAvailable": "This innings has not started yet.",
+    "inningsLabel": "Innings",
+    "battingHeading": "Batting",
+    "bowlingHeading": "Bowling",
+
+    "colBatter": "Batter",
+    "colFielder": "Fielder",
+    "colBowler": "Bowler",
+    "colRuns": "R",
+    "colBalls": "B",
+    "colFours": "4s",
+    "colSixes": "6s",
+    "colSr": "SR",
+    "colOvers": "O",
+    "colDots": "Dots",
+    "colWickets": "W",
+    "colEcon": "Econ",
+    "colWides": "WD",
+    "colNoBalls": "NB",
+
+    "notOutLabel": "not out",
+    "extrasLabel": "Extras",
+    "fowLabel": "Fall of wickets",
+    "totalLabel": "Total",
+    "inOvers": "in",
+    "oversSuffix": "overs",
+
+    "playerDetailRunBreakdown": "Run breakdown",
+    "playerDetailScoringPct": "Scoring shot %",
+    "playerDetailIntent": "Avg intent",
+    "playerDetailWagonWheel": "Wagon wheel",
+
+    "bowlerDetailSummary": "Bowling summary",
+    "bowlerDetailRuns": "Runs conceded",
+    "bowlerDetailRealRuns": "Real runs conceded",
+    "bowlerDetailChances": "Chances created",
+    "bowlerDetailWickets": "Wickets",
+    "bowlerDetailRealWickets": "Real wickets",
+    "bowlerDetailRealEcon": "Real economy",
+    "bowlerDetailRealSr": "Real strike rate",
+    "bowlerDetailPitchMap": "Pitch map",
+
+    "resultLabel": "Result"
+  },
+
+
+  "detailedMatch": {
+    "selectMatchHint": "Select a match above to view detailed over-by-over breakdown.",
+    "loading": "Loading detailed match data…",
+    "error": "There was a problem loading this match.",
+    "noData": "No detailed data available for this match yet.",
+
+    "manhattanTitle": "Runs per over (with wickets)",
+    "noOverData": "No over-level data available for this match.",
+    "noOverDataInnings": "No over-level data for this innings.",
+    "runsShort": "Runs",
+    "wicketsShort": "Wkts",
+
+    "rrTitle": "Run rate comparison",
+
+    "phaseTitle": "Phase breakdown",
+    "noPhaseData": "No phase summary data available for this match.",
+    "colPhase": "Phase",
+    "colTeamA": "Team A",
+    "colTeamB": "Team B",
+    "phasePowerplay": "Powerplay",
+    "phaseMiddle": "Middle overs",
+    "phaseDeath": "Death overs",
+    "phaseRunsLabel": "run(s)",
+    "phaseWicketsLabel": "wicket(s)",
+    "phaseScoringShotPct": "Scoring shot %",
+
+    "ballByBallTitle": "Ball-by-ball summary",
+    "noBallByBall": "No ball-by-ball data available for this match.",
+    "noBallByBallInnings": "No deliveries recorded for this innings.",
+
+    "colOver": "Over",
+    "colBatter": "Batter",
+    "colBowler": "Bowler",
+    "colRuns": "Runs",
+    "colExtras": "Extras",
+    "colNotes": "Notes",
+
+    "colTeam": "Team",
+    "colWickets": "Wkts",
+    "colPhaseSummary": "RR • Dot% • 4/6%",
+
+    "innings1Label": "1st innings",
+    "innings2Label": "2nd innings",
+    "inningsLabelShort": "Inns",
+
+    "btnBallByBall": "Ball by Ball",
+    "btnBallByBallSub": "Analysis of every ball",
+    "btnWagonWheels": "Match Wagon Wheels",
+    "btnWagonWheelsSub": "Wagon Wheels from both teams",
+    "btnPitchMaps": "Match Pitch Maps",
+    "btnPitchMapsSub": "Pitch Maps from both teams",
+    "wagonTitle": "Match Wagon Wheels",
+    "wagonPlaceholder": "Match wagon wheel visualisation will appear here.",
+    "pitchTitle": "Match Pitch Maps",
+    "pitchPlaceholder": "Match pitch map visualisation will appear here.",
+
+    "overLabel": "Over",
+    "phaseWicketsShort": "Wicket(s)",
+    "noWicketsOver": "0 Wickets",
+    "runsOffBatShort": "Bat",
+    "extrasLabel": "Extras",
+    "extrasWide": "Wide",
+    "extrasNoBall": "No ball",
+    "extrasByes": "Byes",
+    "extrasLegByes": "Leg byes",
+    "extrasPenalty": "Penalty",
+
+    "noExtrasShort": "No extras",          
+    "boundaryNote": "Boundary",       
+    "unknownBatter": "Batter",
+    
+    "moreDetails": "More details",
+    "pitchMapSingle": "Pitch map",
+    "wagonSingle": "Wagon wheel",
+    "noPitchForBall": "No pitch location recorded for this ball.",
+    "noWagonForBall": "No wagon wheel location recorded for this ball.",
+    "shotTypeLabel": "Shot type",
+    "footworkLabel": "Footwork",
+    "shotSelectionLabel": "Shot selection",
+    "deliveryTypeLabel": "Delivery type",
+    "aerialLabel": "Aerial",
+    "edgedLabel": "Edged",
+    "edgedYes": "Yes",
+    "missedLabel": "Missed",
+    "missedYes": "Yes",
+    "cleanHitLabel": "Clean hit",
+    "cleanHitYes": "Middle of the bat",
+    "expectedRunsLabel": "Expected runs",
+    "expectedWicketLabel": "Expected wicket value",
+    "intentLabel": "Intent score",
+    "battingBPILabel": "Batting BPI",
+    "bowlingBPILabel": "Bowling BPI",
+    "closeBallModal": "Close",
+
+
+    "wagonSubTitle": "Side-by-side wagon wheels for each innings",
+    "wagonInningsHeader": "{{team}} – {{inningsLabel}}",
+    "wagonNoData": "No wagon wheel data available for this match.",
+    "wagonNoDataInnings": "No wagon wheel data recorded for this innings.",
+    "wagonSubtitle": "Visualising scoring zones for each innings",
+
+
+    "pitchSubTitle": "Side-by-side pitch maps for each innings",
+    "pitchInningsHeader": "{{team}} – {{inningsLabel}}",
+    "pitchNoData": "No pitch map data available for this match.",
+    "pitchNoDataInnings": "No pitch map data recorded for this innings.",
+    "pitchModeDots": "Dot Map",
+    "pitchModeHeat": "Heat Map",
+    "pitchSubtitle": "Balls bowled for each batting innings"
+
+  },
+
+  "matchReport": {
+    "description": "Generate detailed PDF reports for players or entire teams using real match data.",
+    "teamLabel": "Team",
+    "teamPlaceholder": "Select a team",
+    "playerLabel": "Player",
+    "loadingPlayers": "Loading players…",
+    "playerPlaceholder": "Select a player",
+    "playerReportButton": "Player report",
+    "teamReportButton": "Team report"
+  },
+
+  "partnerships": {
+    "description": "Analyse batting partnerships by wicket, runs and balls. Click a partnership to see a wagon wheel and summary.",
+    "inningsLabel": "Innings",
+    "inningsShort": "Inns",
+    "wicketLabel": "Wicket",
+    "partnershipLabel": "Partnership:",
+    "runs": "runs",
+    "balls": "balls",
+    "noData": "No partnership data available for this innings."
+  },
+
+  "pressure": {
+    "description": "Explore batting pressure, bowling pressure and momentum over each over of the match. Wickets are marked with ❌ symbols.",
+    "battingPressure": "Batting pressure",
+    "bowlingPressure": "Bowling pressure",
+    "momentum": "Momentum",
+    "totalMomentum": "Total momentum",
+    "oversLabel": "Overs",
+    "indexLabel": "Pressure index",
+    "battingLabel": "batting",
+    "noData": "No momentum data available for this match."
+  }
+}
+

@@ -1,0 +1,328 @@
+/* ===========================
+   SCORECARD GRID LAYOUT
+   =========================== */
+
+.scorecard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Shared row style */
+.scorecard-row {
+  display: grid;
+  grid-template-columns:
+    minmax(130px, 2.1fr)
+    minmax(130px, 2.1fr)
+    minmax(130px, 2.1fr)
+    repeat(5, minmax(32px, 0.7fr));
+  gap: 2px;
+  align-items: center;
+  padding: 6px 4px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: var(--color-text-primary);
+}
+
+/* Bowling grid with narrower name col */
+.scorecard-grid--bowling .scorecard-row {
+  grid-template-columns:
+    minmax(150px, 2.6fr)
+    repeat(7, minmax(34px, 0.7fr));
+}
+
+/* Batting grid – give SR a little more width */
+.scorecard-grid--batting .scorecard-row {
+  grid-template-columns:
+    minmax(140px, 2.2fr)   /* Batter */
+    minmax(115px, 1.8fr)   /* Fielder */
+    minmax(115px, 1.8fr)   /* Bowler */
+    minmax(30px, 0.65fr)   /* R */
+    minmax(30px, 0.65fr)   /* B */
+    minmax(30px, 0.55fr)   /* 4s */
+    minmax(30px, 0.55fr)   /* 6s */
+    minmax(46px, 0.9fr);   /* SR – a touch wider */
+}
+
+.scorecard-row--header {
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-secondary);
+}
+
+.scorecard-row--data {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.02),
+    rgba(255, 255, 255, 0)
+  );
+  transition: background 0.15s ease, transform 0.12s ease;
+}
+
+.scorecard-row--clickable {
+  cursor: pointer;
+}
+
+.scorecard-row--clickable:hover {
+  background: linear-gradient(
+    90deg,
+    var(--color-accent-transparent, rgba(255, 215, 0, 0.18)),
+    rgba(0, 0, 0, 0)
+  );
+  transform: translateY(-1px);
+}
+
+/* Cells that might wrap */
+.scorecard-cell-batter,
+.scorecard-cell-fielder,
+.scorecard-cell-bowler,
+.scorecard-cell-bowler-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* ===========================
+   RESULT BAND & INNINGS BANNER
+   =========================== */
+
+.match-result-band {
+  margin-top: 1.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  background: linear-gradient(
+    90deg,
+    var(--color-accent),
+    var(--color-primary, #1b5e20)
+  );
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #000;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.scorecard-innings-banner {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px 16px 10px 18px;
+  border-radius: 14px;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  box-sizing: border-box;
+}
+
+/* Accent stripe on the left */
+.scorecard-innings-banner::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 4px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to bottom,
+    var(--color-accent),
+    var(--color-primary)
+  );
+}
+
+.scorecard-innings-tag {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-secondary);
+  opacity: 0.85;
+}
+
+.scorecard-innings-team {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.scorecard-innings-score {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.scorecard-innings-overs {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-left: 4px;
+}
+
+
+/* ===========================
+   MODAL / POPOUT CARDS
+   =========================== */
+
+/* Dark overlay behind the modal */
+.modal-backdrop.show {
+  background: rgba(0, 0, 0, 0.8) !important;
+  opacity: 1 !important;
+}
+
+/* 🔒 Always-dark modal shell, independent of global theme */
+.modal-content.themed-modal-content {
+  background-color: #111 !important;
+  background: #111 !important;
+  color: #f5f5f5 !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: none !important;
+}
+
+body .modal.show .modal-dialog .modal-content.themed-modal-content {
+  background-color: #111 !important;
+  background: #111 !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+}
+
+.modal-content.themed-modal-content .modal-header,
+.modal-content.themed-modal-content .modal-footer {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Inner card inside the modal — this is the “popout card” content */
+.scorecard-modal-inner {
+  background-color: #111;
+  color: #f5f5f5;
+  border-radius: 14px;
+  padding: 12px 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Subheading inside modals */
+.themed-subheading {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #bbbbbb;
+}
+
+
+/* ===========================
+   MODAL HEADER – GRADIENT HERO
+   (used for both batter + bowler)
+   =========================== */
+
+.modal-content.themed-modal-content .scorecard-modal-header-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--color-accent),
+    var(--color-primary, #1b5e20)
+  );
+  border-bottom: none;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+}
+
+/* Layout for header content */
+.scorecard-modal-header-main {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  width: 100%;
+  gap: 16px;
+}
+
+/* Batter name */
+.scorecard-modal-header-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* Batter runs + balls */
+.scorecard-modal-header-runs {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.scorecard-modal-header-balls {
+  margin-left: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* Bowler quick line: O – Dots – R – W */
+.scorecard-modal-header-bowler-stats {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.scorecard-modal-header-bowler-stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.scorecard-modal-header-bowler-stat-label {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+}
+
+/* Force all text in gradient header to a consistent colour */
+.scorecard-modal-header-gradient,
+.scorecard-modal-header-gradient * {
+  color: #111 !important;
+}
+
+/* Make the close button visible on the gradient */
+.scorecard-modal-header-gradient .btn-close {
+  filter: invert(1);
+  opacity: 0.9;
+}
+
+
+/* ===========================
+   WAGON WHEEL & PITCH MAP
+   =========================== */
+
+.scorecard-wagon-modal-wrapper,
+.scorecard-pitch-modal-wrapper {
+  width: 100%;
+  max-width: 340px;
+  margin: 4px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Let the canvas scale to the wrapper (no weird overflow) */
+.scorecard-wagon-modal-wrapper canvas,
+.scorecard-pitch-modal-wrapper canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Force all text inside the modal content to use dark-mode colours */
+.scorecard-modal-inner,
+.scorecard-modal-inner * {
+  color: #f5f5f5 !important;
+}
+
+/* Slightly softer grey for subheadings */
+.scorecard-modal-inner .themed-subheading {
+  color: #bbbbbb !important;
+}

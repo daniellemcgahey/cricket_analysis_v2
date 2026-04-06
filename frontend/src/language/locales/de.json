@@ -1,0 +1,590 @@
+{
+  "languageName": "Deutsch",
+
+  "settings": "Einstellungen",
+  "language": "Sprache",
+  "theme": "Theme",
+  "units": "Einheiten",
+  "save": "Speichern",
+  "open": "Öffnen",
+  "close": "Schließen",
+
+  "categories": {
+    "Men": "Herren",
+    "Women": "Damen",
+    "U19 Men": "U19 Herren",
+    "U19 Women": "U19 Damen",
+    "Training": "Training"
+  },
+
+  "tabs": {
+    "Batting": "Batting",
+    "Bowling": "Bowling",
+    "Fielding": "Fielding",
+    "Powerplay": "Powerplay",
+    "Middle Overs": "Mittlere Overs",
+    "Death Overs": "Schluss-Overs",
+    "Match": "Spiel"
+  },
+
+  "interactiveField": "Interaktives Feld",
+  "back": "Zurück",
+  "coachesHub": "Coaches Hub",
+
+  "common": {
+    "loading": "Laden…",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "selectAll": "Alle auswählen",
+    "comingSoon": "Bald verfügbar",
+
+    "player": "Spielerin",
+    "runs": "Runs",
+    "balls": "Bälle",
+    "overs": "Overs",
+    "wicketsShort": "Wkts",
+    "econ": "Eco",
+    "sr": "SR",
+    "avg": "Schnitt"
+  },
+
+  "home": {
+    "dashboardLabel": "Dashboard",
+    "heroDescription": "Schneller Zugriff auf dein nächstes Spiel, die Analyse des letzten Spiels und wichtige Leistungsbereiche. Nutze dies als Startseite, bevor du tiefer in die Analyse einsteigst.",
+    "teamFlagAlt": "Teamflagge",
+    "modeLabel": "Modus:",
+    "modeCoaching": "Coaching",
+
+    "nextFixtureTitle": "Nächstes Spiel",
+    "matchPreparationTitle": "Spielvorbereitung",
+    "nextFixtureLoading": "Spielplan wird geprüft…",
+    "noUpcomingFixtures": "Es sind noch keine kommenden Spiele angesetzt. Sobald Partien hinzugefügt werden, erscheint das nächste Spiel automatisch hier.",
+    "nextFixtureDescription": "Nutze die Pre-Game-Tools, um Match-ups, Kernbotschaften und Rollen vor diesem Spiel zu planen.",
+    "goToCoachesHubButton": "Zum Coaches Hub",
+    "vs": "vs",
+    "dateTbc": "Datum noch offen",
+
+    "lastFixtureTitle": "Letztes Spiel",
+    "lastFixtureDescription": "Überprüfe wichtige Kennzahlen für Batting, Bowling und Fielding und wähle dann aus, was du der Gruppe zeigen möchtest.",
+    "viewMatchAnalysisButton": "Spielanalyse anzeigen (später verknüpfen)",
+
+    "quickLinksTitle": "Schnellzugriff",
+    "quickLinkCoachesHub": "Coaches Hub",
+    "quickLinkPlayerAnalysis": "Spielerinnenanalyse (bald verfügbar)",
+    "quickLinkTournamentSummary": "Turnierzusammenfassung (bald verfügbar)",
+    "quickLinksFooter": "Wir erweitern dieses Dashboard, während wir in v2 die Bereiche Spiele, Spielerinnen und Turniere ausbauen.",
+
+    "usLabel": "Wir:",
+    "themLabel": "Sie:"
+  },
+
+  "coaches": {
+    "title": "Coaches Hub",
+
+    "iccToggleShowTrend": "Ranking-/Rating-Verlauf",
+    "iccToggleShowOverview": "ICC-Rating-Übersicht",
+    "updateRankingButton": "ICC-Ranking aktualisieren",
+    "trendCardTitle": "ICC-Ranking- & Rating-Verlauf (2 Jahre)",
+    "rankLabel": "Rang",
+    "ratingLabel": "Rating",
+
+    "kpiIccRank": "ICC-Rang",
+    "kpiRating": "Rating",
+    "kpiMatchesCounted": "Gezählte Spiele",
+    "kpiPoints": "Punkte",
+    "kpiWinPct": "Sieg- %",
+    "kpiAvgRunsFor": "Ø Runs für",
+    "kpiAvgRunsAgainst": "Ø Runs gegen",
+    "kpiMatchesPlayed": "Gespielte Spiele",
+
+    "performanceToolsTitle": "Performance-Tools",
+    "toolPreGame": "Pre-Game-Analyse",
+    "toolPostGame": "Post-Game-Analyse",
+    "toolPostTournament": "Post-Turnier-Analyse",
+    "toolTraining": "Trainingstools"
+  },
+
+  "pregame": {
+    "title": "Pre-Game-Analyse",
+
+    "fields": {
+      "opposition": "Gegner"
+    },
+
+    "placeholders": {
+      "selectOpposition": "Gegner auswählen"
+    },
+
+    "labels": {
+      "matchup": "Match-up:",
+      "selectOppositionToUnlockTools": "Wähle einen Gegner, um die Tools freizuschalten.",
+      "toolsUnlockOnceDifferentOpposition": "Die Tools werden freigeschaltet, sobald du ein anderes Team als dein eigenes auswählst."
+    },
+
+    "alerts": {
+      "chooseValidOpposition": "Bitte wähle einen gültigen Gegner (anders als dein eigenes Team).",
+      "selectAtLeastOneOppositionBatter": "Bitte mindestens eine gegnerische Batterin auswählen.",
+      "selectAtLeastOneOurBowler": "Bitte mindestens eine unserer Bowler auswählen.",
+      "selectGround": "Bitte einen Ground auswählen."
+    },
+
+    "errors": {
+      "couldNotLoadCountries": "Länder konnten nicht geladen werden.",
+      "couldNotLoadOpponentPlayers": "Gegnerische Spielerinnen konnten nicht geladen werden.",
+      "couldNotLoadOurBowlers": "Unsere Bowler konnten nicht geladen werden.",
+      "couldNotGenerateGamePlanPdf": "Game-Plan-PDF konnte nicht erstellt werden.",
+      "failedToLoadVenues": "Grounds konnten nicht geladen werden.",
+      "failedToLoadInsights": "Insights konnten nicht geladen werden.",
+      "failedToLoadKeyOppositionPlayers": "Wichtige gegnerische Spielerinnen konnten nicht geladen werden.",
+      "failedToLoadStrengthsWeaknesses": "Stärken & Schwächen konnten nicht geladen werden.",
+      "couldNotComputeBattingTargets": "Batting-Ziele konnten nicht berechnet werden."
+    },
+
+    "cards": {
+      "gamePlan": {
+        "title": "Game Plan (PDF)",
+        "description": "Match-ups, empfohlene Zonen und Pläne pro Phase. Als Coach-taugliches PDF für Pre-Game-Meetings generiert.",
+        "button": "Aufstellungen wählen & generieren"
+      },
+      "keyOpposition": {
+        "title": "Wichtige gegnerische Spielerinnen",
+        "description": "Top 3 mit dem Schläger (SR / Schnitt) und mit dem Ball (Wickets / Economy), basierend auf deiner Turnierdatenbank.",
+        "button": "Shortlist anzeigen"
+      },
+      "battingTargets": {
+        "title": "Batting-Ziele",
+        "description": "Par-Score, Ziel-Total und Phasenaufteilung, angepasst an Ground, Gegner und unser Team.",
+        "button": "Konfigurieren & berechnen"
+      },
+      "venueToss": {
+        "title": "Ground- & Toss-Insights",
+        "description": "Scoring-Trends des Grounds, First-Innings-Schnitte und Toss-Entscheidungen nach Tageszeit.",
+        "button": "Ground auswählen"
+      },
+      "strengthsWeaknesses": {
+        "title": "Stärken & Schwächen",
+        "description": "Batting- und Bowling-Trends des Gegners nach Phase und Stil: Scoring-Muster, Dot-Ball-Raten und Dismissal-Typen.",
+        "button": "Report öffnen"
+      },
+      "doDonts": {
+        "title": "Do & Don’ts",
+        "description": "Kurzer, klarer Input für Spielerinnen: Woran sie anknüpfen sollen und was sie vermeiden sollten. (Endpoint kann später angebunden werden.)"
+      }
+    },
+
+    "modals": {
+      "gamePlan": {
+        "title": "Game Plan — Aufstellungen wählen",
+        "oppositionBatters": "Gegnerische Batterinnen",
+        "noPlayers": "Keine Spielerinnen",
+        "selectTop6": "Top 6 auswählen",
+        "battersAccordion": "Batterinnen",
+        "ourBowlers": "Unsere Bowler",
+        "noBowlers": "Keine Bowler",
+        "bowlersAccordion": "Bowler",
+        "generatePdfButton": "PDF generieren"
+      },
+
+      "venueToss": {
+        "title": "Ground- & Toss-Insights",
+        "groundLabel": "Ground",
+        "timeOfDayLabel": "Tageszeit (optional)",
+        "timeOfDayAny": "Beliebig",
+        "showInsightsButton": "Insights anzeigen",
+        "avgFirstInningsScore": "Ø Runs in der ersten Innings",
+        "winRateBattingFirst": "Siegrate beim Batting zuerst",
+        "mostCommonTossDecision": "Häufigste Toss-Entscheidung",
+        "tossDistributionLabel": "Toss-Entscheidungen:"
+      },
+
+      "keyOpposition": {
+        "title": "Wichtige gegnerische Spielerinnen",
+        "topBattersHeading": "Top-Batterinnen (Strike Rate • Schnitt)",
+        "topBowlersHeading": "Top-Bowler (Wickets • Economy)",
+        "noQualifiedBatters": "Keine qualifizierten Batterinnen",
+        "noQualifiedBowlers": "Keine qualifizierten Bowler"
+      },
+
+      "strengthsWeaknesses": {
+        "title": "Stärken & Schwächen des Gegners",
+        "battingStrengths": "Batting — Wichtige Stärken",
+        "battingWeaknesses": "Batting — Wichtige Schwächen",
+        "bowlingStrengths": "Bowling — Wichtige Stärken",
+        "bowlingWeaknesses": "Bowling — Wichtige Schwächen",
+        "detailBattingByStyle": "Details — Batting nach Bowler-Typ",
+        "detailBattingByPhase": "Details — Batting nach Phase",
+        "detailBowlingByPhase": "Details — Bowling nach Phase",
+        "detailBowlingByType": "Details — Bowling nach Typ"
+      },
+
+      "battingTargets": {
+        "title": "Batting-Ziele — angepasst an Ground & Gegner",
+        "groundLabel": "Ground",
+        "timeOfDayLabel": "Tageszeit (optional)",
+        "timeOfDayAny": "Beliebig",
+        "recencyWindowLabel": "Aktualitätsfenster (Tage)",
+        "includeRainLabel": "Regen / DLS einbeziehen",
+        "computeButton": "Ziele berechnen",
+        "venuePar": "Ground-Par (20 Overs)",
+        "adjustedPar": "Angepasstes Par (Gegner & wir)",
+        "targetTotal": "Zieltotal (+10 % Puffer)",
+        "phaseTargetsHeading": "Ziele pro Phase",
+        "rpo": "RPO"
+      },
+
+      "common": {
+        "type": "Typ",
+        "balls": "Bälle",
+        "dotPct": "Dot %",
+        "boundaryPct": "Boundary %",
+        "outsPerBall": "Dismissals pro Ball",
+        "phase": "Phase",
+        "overs": "Overs",
+        "runs": "Runs",
+        "wicketsPerBall": "Wkts pro Ball"
+      }
+    }
+  },
+
+  "postGame": {
+    "filters": {
+      "categoryLabel": "Kategorie",
+      "matchBrasilLabel": "Spiel (nur Brasilien)",
+      "noBrasilMatches": "Keine Brasilien-Spiele gefunden"
+    },
+    "alerts": {
+      "selectMatchWithBrasil": "Bitte ein Spiel auswählen, an dem Brasilien beteiligt ist.",
+      "selectMatch": "Bitte zuerst ein Spiel auswählen."
+    },
+    "errors": {
+      "matchesLoad": "Spiele konnten nicht geladen werden.",
+      "kpisLoad": "KPI für dieses Spiel konnten nicht geladen werden.",
+      "teamsLoad": "Teams für dieses Spiel konnten nicht geladen werden.",
+      "playersLoad": "Spielerinnen für dieses Team konnten nicht geladen werden.",
+      "playerSummaryLoad": "Spielerinnen-Übersicht konnte nicht geladen werden."
+    },
+    "cards": {
+      "matchKpisTitle": "Spiel-KPIs",
+      "matchKpisDescription": "Batting-, Bowling- und Fielding-KPIs — aufgeteilt in Powerplay, mittlere Overs, Schluss-Overs und gesamtes Spiel.",
+      "playerSummaryTitle": "Spielerinnen-Übersicht",
+      "playerSummaryDescription": "Schneller Überblick über Batting, Bowling und Fielding für jede Spielerin in diesem Spiel."
+    },
+    "kpiModal": {
+      "title": "KPIs — Ziele vs Ergebnisse",
+      "kpisMetLabel": "Erreichte KPIs",
+      "showFailedOnlyLabel": "Nur nicht erreichte anzeigen",
+      "metShort": "ok",
+      "noKpisSection": "Keine KPIs in diesem Abschnitt.",
+      "tableHeaderKpi": "KPI",
+      "tableHeaderTarget": "Ziel",
+      "tableHeaderResult": "Ergebnis",
+      "tableHeaderStatus": "Status",
+      "statusMet": "Erreicht",
+      "statusMissed": "Verfehlt",
+      "statusNA": "N/A"
+    },
+    "batting": {
+      "scoreSectionTitle": "Score",
+      "runsBallsLabel": "Runs (Bälle)",
+      "strikeRateLabel": "Strike Rate",
+      "strikeRateSub": "Runs pro 100 Bälle",
+      "foursSixesLabel": "4s / 6s",
+      "scoringShotsSectionTitle": "Scoring-Shots",
+      "scoringShotPctLabel": "Scoring-Shot- %",
+      "boundaryPctLabel": "Boundary %",
+      "boundaryPctSub": "4s + 6s als % der gespielten Bälle",
+      "phasesSectionTitle": "Phasen",
+      "dismissalSectionTitle": "Dismissal"
+    },
+    "bowling": {
+      "noData": "Keine Bowling-Daten für diese Spielerin in diesem Spiel.",
+      "figuresSectionTitle": "Figuren",
+      "figuresLabel": "Overs–Dots–Runs–Wickets",
+      "economyLabel": "Economy",
+      "economySub": "Runs pro Over",
+      "dotBallPctLabel": "Dot-Ball- %",
+      "dotBallPctSub": "Dots als % der legalen Bälle",
+      "extrasSectionTitle": "Extras & Boundaries",
+      "widesLabel": "Wides",
+      "noBallsLabel": "No Balls",
+      "boundaryBallsLabel": "Boundary-Bälle",
+      "phasesSectionTitle": "Phasen"
+    },
+    "fielding": {
+      "noData": "Keine Fielding-Daten für diese Spielerin in diesem Spiel.",
+      "involvementSectionTitle": "Beteiligung",
+      "ballsFieldedLabel": "Bälle im Fielding",
+      "cleanPickupsLabel": "Saubere Aufnahmen",
+      "fumblesLabel": "Fumbles",
+      "overthrowsConcededLabel": "Verursachte Overthrows",
+      "catchingSectionTitle": "Catches & Run-Outs",
+      "catchesTakenLabel": "Genommene Catches",
+      "dropsLabel": "Drops / verpasste Catches",
+      "runOutsDirectLabel": "Run-Outs (direkt)",
+      "runOutsAssistLabel": "Run-Outs (Assist)",
+      "qualitySectionTitle": "Qualität",
+      "cleanHandsPctLabel": "Saubere-Hände- %",
+      "chanceConversionPctLabel": "Chancenverwertung- %"
+    },
+    "common": {
+      "runsWord": "Runs",
+      "ballsWord": "Bälle",
+      "scoringShotsWord": "Scoring-Shots",
+      "dotBallsWord": "Dot-Bälle"
+    },
+    "player": {
+      "noBattingData": "Keine Batting-Daten für diese Spielerin in diesem Spiel.",
+      "noBowlingData": "Keine Bowling-Daten für diese Spielerin in diesem Spiel.",
+      "noFieldingData": "Keine Fielding-Daten für diese Spielerin in diesem Spiel."
+    },
+    "playerModal": {
+      "title": "Spielerinnen-Übersicht",
+      "teamLabel": "Team",
+      "playerLabel": "Spielerin",
+      "noTeamsFound": "Keine Teams gefunden",
+      "noPlayersFound": "Keine Spielerinnen gefunden",
+      "playerHeading": "Spielerin",
+      "teamHeading": "Team",
+      "selectPrompt": "Wähle ein Team und eine Spielerin, um die Übersicht zu sehen."
+    }
+  },
+
+  "postTournament": {
+    "filters": {
+      "categoryLabel": "Kategorie",
+      "tournamentLabel": "Turnier",
+      "teamLabel": "Team",
+      "playerLabel": "Spielerin",
+      "noTournaments": "Keine Turniere gefunden",
+      "noTeams": "Keine Teams",
+      "noPlayers": "Keine Spielerinnen"
+    },
+    "errors": {
+      "tournamentsLoad": "Turniere für diese Kategorie konnten nicht geladen werden.",
+      "teamsLoad": "Teams für dieses Turnier konnten nicht geladen werden.",
+      "playersLoad": "Spielerinnen für dieses Team konnten nicht geladen werden.",
+      "playerSummaryLoad": "Turnierübersicht der Spielerin konnte nicht geladen werden.",
+      "teamSummaryLoad": "Turnierübersicht des Teams konnte nicht geladen werden."
+    },
+    "cards": {
+      "playerSummaryTitle": "Turnierübersicht Spielerin",
+      "playerSummaryDescription": "Turnierweite Batting-, Bowling- und Fielding-Übersicht für die ausgewählte Spielerin.",
+      "teamSummaryTitle": "Turnierübersicht Team",
+      "teamSummaryDescription": "Turnierweite Übersicht für das ausgewählte Team: Batting, Bowling, Fielding und wichtige Leader."
+    },
+    "player": {
+      "modalTitle": "Turnierübersicht Spielerin",
+      "labels": {
+        "player": "Spielerin",
+        "team": "Team"
+      },
+      "noBattingData": "Keine Batting-Daten für diese Spielerin in diesem Turnier.",
+      "noBowlingData": "Keine Bowling-Daten für diese Spielerin in diesem Turnier.",
+      "noFieldingData": "Keine Fielding-Daten für diese Spielerin in diesem Turnier.",
+      "selectPrompt": "Wähle oben ein Turnier, ein Team und eine Spielerin und öffne diese Karte dann erneut, um die Turnierübersicht zu sehen."
+    },
+    "teamSummary": {
+      "modalTitle": "Turnierübersicht Team",
+      "selectTournamentAndTeamFirst": "Bitte zuerst ein Turnier und ein Team auswählen.",
+      "selectPrompt": "Wähle ein Turnier und ein Team und generiere dann die Übersicht.",
+      "selectPromptModal": "Wähle oben ein Turnier und ein Team und öffne diese Karte dann erneut, um die Übersicht zu generieren.",
+      "overviewSectionTitle": "Überblick",
+      "overviewMatchesLabel": "Spiele",
+      "overviewWinsLabel": "Siege",
+      "overviewLossesLabel": "Niederlagen",
+      "overviewNoResultLabel": "No Result",
+      "overviewWinPctLabel": "Sieg- %",
+      "overviewRunRateForLabel": "Run Rate für",
+      "overviewNetRunRateLabel": "Net Run Rate"
+    },
+    "batting": {
+      "sectionTitle": "Batting des Teams",
+      "scoreSectionTitle": "Score (Turnier)",
+      "runsBallsLabel": "Runs (Bälle)",
+      "strikeRateLabel": "Strike Rate",
+      "strikeRateSub": "Runs pro 100 Bälle",
+      "foursSixesLabel": "4s / 6s",
+      "onesTwosThreesLabel": "1er / 2er / 3er",
+      "scoringShotsSectionTitle": "Scoring-Shots",
+      "scoringShotPctLabel": "Scoring-Shot- %",
+      "boundaryPctLabel": "Boundary %",
+      "boundaryPctSub": "4s + 6s als % der gespielten Bälle",
+      "phasesSectionTitle": "Phasen (Turnier)",
+      "matchSummarySectionTitle": "Turnierzusammenfassung (Spiel für Spiel)",
+      "runsPer20Label": "Runs pro 20 Overs",
+      "tableHeaderPhase": "Phase",
+      "tableHeaderRuns": "Runs",
+      "tableHeaderSsPctShort": "SS%",
+      "tableHeaderOvers": "Overs",
+      "tableHeaderRunRateShort": "RR",
+      "tableHeaderWickets": "Wickets"
+    },
+    "bowling": {
+      "sectionTitle": "Bowling des Teams",
+      "figuresSectionTitle": "Figuren (Turnier)",
+      "figuresLabel": "Overs–Dots–Runs–Wickets",
+      "economyLabel": "Economy",
+      "economySub": "Runs pro Over",
+      "dotBallPctLabel": "Dot-Ball- %",
+      "extrasSectionTitle": "Extras & Boundaries",
+      "phasesSectionTitle": "Phasen (Turnier)",
+      "matchSummarySectionTitle": "Turnierzusammenfassung (Spiel für Spiel)",
+      "runsPer20ConcededLabel": "Runs gegen pro 20 Overs",
+      "economyRateLabel": "Economy Rate",
+      "dotBallPctTeamLabel": "Dot-Ball- %",
+      "tableHeaderPhase": "Phase",
+      "tableHeaderRunsConceded": "Runs",
+      "tableHeaderDotPctShort": "Dot %",
+      "tableHeaderOvers": "Overs",
+      "tableHeaderEconomyShort": "Eco",
+      "tableHeaderWicketsShort": "Wkts"
+    },
+    "fielding": {
+      "sectionTitleInvolvement": "Beteiligung (Turnier)",
+      "sectionTitleCatching": "Catches & Run-Outs",
+      "sectionTitleQuality": "Qualität",
+      "sectionTitleTeam": "Fielding",
+      "ballsFieldedLabel": "Bälle im Fielding",
+      "cleanPickupsLabel": "Saubere Aufnahmen",
+      "fumblesLabel": "Fumbles",
+      "overthrowsConcededLabel": "Verursachte Overthrows",
+      "catchesTakenLabel": "Genommene Catches",
+      "dropsLabel": "Drops / verpasste Catches",
+      "runOutsDirectLabel": "Run-Outs (direkt)",
+      "runOutsAssistLabel": "Run-Outs (Assist)",
+      "cleanHandsPctLabel": "Saubere-Hände- %",
+      "chanceConversionPctLabel": "Chancenverwertung- %",
+      "catchesLabel": "Catches",
+      "stumpingsLabel": "Stumpings",
+      "runOutsLabel": "Run-Outs",
+      "dropsShortLabel": "Drops",
+      "missedRunOutsLabel": "Verpasste Run-Outs",
+      "overthrowsLabel": "Overthrows",
+      "widesLabel": "Wides",
+      "noBallsLabel": "No Balls"
+    },
+    "leaders": {
+      "sectionTitle": "Leader",
+      "battingHeading": "Batting",
+      "bowlingHeading": "Bowling",
+      "fieldingHeading": "Fielding",
+      "battingRunsSuffix": "Runs",
+      "battingSrShort": "SR",
+      "bowlingWicketsSuffix": "Wickets",
+      "bowlingEconShort": "Econ",
+      "fieldingCatchesShort": "Catches",
+      "fieldingRunOutsShort": "ROs",
+      "fieldingStumpingsShort": "Stmps",
+      "noBattingLeaders": "Noch keine Batting-Leader.",
+      "noBowlingLeaders": "Noch keine Bowling-Leader.",
+      "noFieldingLeaders": "Noch keine Fielding-Leader."
+    }
+  },
+
+  "training": {
+    "interactiveFieldDescription": "Spielerinnen per Drag & Drop auf dem Feld platzieren. Herren/Damen, Powerplay/mittlere/Schluss-Overs, Soft-Checks der Regeln und PDF-Export.",
+    "savePdfButton": "PDF speichern",
+    "bowlerNamePlaceholder": "Name der Bowlerin",
+    "bowlerLabel": "Bowlerin",
+    "dragFieldersTitle": "Fielderinnen auf das Feld ziehen",
+    "softRuleChecksTitle": "Soft-Checks der Regeln",
+    "handHint": "Beeinflusst Off-/Leg-Side",
+    "dragToPlaceHint": "Zum Platzieren ziehen",
+    "rules": {
+      "outsideInnerPrefix": "Außerhalb des inneren Kreises",
+      "offSideMinPrefix": "Mindestens 4 auf der Off-Side",
+      "legBehindPrefix": "Maximal 2 hinter der Linie auf der Leg-Side"
+    }
+  },
+
+  "login": {
+    "appTitle": "Cricket Performance Hub",
+    "signInHeading": "Anmelden",
+    "subtitle": "Nutze dein von der Mannschaft bereitgestelltes Konto, um auf Spieldaten und Analysetools zuzugreifen.",
+    "emailLabel": "E-Mail",
+    "passwordLabel": "Passwort",
+    "signInButton": "Anmelden",
+    "signingInButton": "Wird angemeldet...",
+    "restrictedNote": "Der Zugriff ist auf das Teamstaff beschränkt. Kontaktiere deinen Verband, wenn du ein Konto benötigst."
+  },
+
+  "appShell": {
+    "navDashboard": "Dashboard",
+    "navCoachesHub": "Coaches Hub",
+    "roleAdmin": "Admin",
+    "roleUser": "Benutzer",
+    "fixturesAdmin": "Spiele & Kalender",
+    "themeBranding": "Theme & Branding",
+    "signOut": "Abmelden"
+  },
+
+  "darkMode": {
+    "light": "Hell",
+    "dark": "Dunkel"
+  },
+
+  "fixtures": {
+  "adminOnly": "Nur Administratoren können Spiele und Kalender verwalten.",
+  "title": "Spiele und Spielkalender",
+  "description": "Plane die nächsten Spiele deines Verbands. Diese Spiele steuern die Karte „Nächstes Spiel“ im Dashboard und können für Planungstools verwendet werden.",
+  "addFixtureTitle": "Spiel hinzufügen",
+
+
+  "errors": {
+    "loadFixtures": "Spiele konnten nicht geladen werden.",
+    "loadOpponents": "Gegner-Teams konnten nicht geladen werden.",
+    "loadTournaments": "Turniere konnten nicht geladen werden.",
+    "createFixture": "Spiel konnte nicht erstellt werden.",
+    "addOpponent": "Gegner-Team konnte nicht hinzugefügt werden.",
+    "addTournament": "Turnier konnte nicht hinzugefügt werden."
+  },
+
+  "validation": {
+    "dateAndOpponent": "Bitte wähle ein Datum und einen Gegner."
+  },
+
+  "prompts": {
+    "addOpponent": "Gib den Namen des gegnerischen Landes ein",
+    "addTournament": "Gib den Turniernamen ein"
+  },
+
+  "labels": {
+    "date": "Datum",
+    "opponent": "Gegner",
+    "tournament": "Turnier",
+    "timeOfDay": "Tageszeit",
+    "ground": "Platz / Stadion"
+  },
+
+  "buttons": {
+    "addOpponent": "+ Neues Team hinzufügen",
+    "addTournament": "+ Neues Turnier hinzufügen",
+    "addFixture": "Spiel hinzufügen",
+    "saving": "Speichern..."
+  },
+
+  "placeholders": {
+    "loadingTeams": "Teams werden geladen...",
+    "selectOpponent": "Gegner auswählen",
+    "loadingTournaments": "Turniere werden geladen...",
+    "selectTournamentOptional": "Optional: Turnier auswählen"
+  },
+
+  "upcomingTitle": "Bevorstehende Spiele",
+  "loadingFixtures": "Laden…",
+  "noUpcoming": "Es sind noch keine Spiele geplant.",
+  "unknownMonth": "Unbekannt",
+  "tbc": "Noch offen",
+  "vs": "vs",
+  "at": "@",
+
+  "timeOfDay": {
+    "day": "Tag",
+    "dayNight": "Tag/Nacht",
+    "night": "Nacht"
+  },
+
+  "footerNote": "Wenn du hier Spiele hinzufügst, weiß das Dashboard immer, was als Nächstes kommt."
+}
+
+}

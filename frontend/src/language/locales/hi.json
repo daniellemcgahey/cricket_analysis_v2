@@ -1,0 +1,590 @@
+{
+  "languageName": "हिन्दी",
+
+  "settings": "सेटिंग्स",
+  "language": "भाषा",
+  "theme": "थीम",
+  "units": "इकाइयाँ",
+  "save": "सहेजें",
+  "open": "खोलें",
+  "close": "बंद करें",
+
+  "categories": {
+    "Men": "पुरुष",
+    "Women": "महिला",
+    "U19 Men": "U19 पुरुष",
+    "U19 Women": "U19 महिला",
+    "Training": "प्रशिक्षण"
+  },
+
+  "tabs": {
+    "Batting": "Batting",
+    "Bowling": "Bowling",
+    "Fielding": "Fielding",
+    "Powerplay": "Powerplay",
+    "Middle Overs": "मध्य ओवर",
+    "Death Overs": "Death Overs",
+    "Match": "Match"
+  },
+
+  "interactiveField": "इंटरएक्टिव फ़ील्ड",
+  "back": "वापस",
+  "coachesHub": "Coaches Hub",
+
+  "common": {
+    "loading": "लोड हो रहा है…",
+    "cancel": "रद्द करें",
+    "close": "बंद करें",
+    "selectAll": "सभी चुनें",
+    "comingSoon": "जल्द आ रहा है",
+
+    "player": "खिलाड़ी",
+    "runs": "रन",
+    "balls": "गेंदें",
+    "overs": "ओवर",
+    "wicketsShort": "Wkts",
+    "econ": "Eco",
+    "sr": "SR",
+    "avg": "औसत"
+  },
+
+  "home": {
+    "dashboardLabel": "डैशबोर्ड",
+    "heroDescription": "आपके अगले मैच, पिछली मैच समीक्षा और मुख्य प्रदर्शन क्षेत्रों तक त्वरित पहुँच। गहरी विश्लेषण में जाने से पहले इसे अपना होम बेस मानें।",
+    "teamFlagAlt": "टीम का झंडा",
+    "modeLabel": "मोड:",
+    "modeCoaching": "Coaching",
+
+    "nextFixtureTitle": "अगला मैच",
+    "matchPreparationTitle": "मैच तैयारी",
+    "nextFixtureLoading": "आपका कार्यक्रम चेक किया जा रहा है…",
+    "noUpcomingFixtures": "कोई आगामी मैच अभी तक निर्धारित नहीं है। जैसे ही मैच जोड़े जाएँगे, अगला मैच यहाँ अपने आप दिखाई देगा।",
+    "nextFixtureDescription": "इस मैच से पहले मैच-अप, मुख्य संदेश और रोल प्लान करने के लिए प्री-गेम टूल्स का उपयोग करें।",
+    "goToCoachesHubButton": "Coaches Hub पर जाएँ",
+    "vs": "vs",
+    "dateTbc": "तारीख तय होनी बाकी",
+
+    "lastFixtureTitle": "पिछला मैच",
+    "lastFixtureDescription": "मुख्य batting, bowling और fielding मेट्रिक्स की समीक्षा करें, फिर वही चुनें जो आप समूह को दिखाना चाहती हैं।",
+    "viewMatchAnalysisButton": "मैच विश्लेषण देखें (बाद में वायर होगा)",
+
+    "quickLinksTitle": "क्विक लिंक",
+    "quickLinkCoachesHub": "Coaches Hub",
+    "quickLinkPlayerAnalysis": "प्लेयर विश्लेषण (जल्द आ रहा है)",
+    "quickLinkTournamentSummary": "टूर्नामेंट सारांश (जल्द आ रहा है)",
+    "quickLinksFooter": "जब हम v2 में मैच, प्लेयर्स और टूर्नामेंट सेक्शन बनाते जाएँगे, यह डैशबोर्ड भी बढ़ता जाएगा।",
+
+    "usLabel": "हम:",
+    "themLabel": "वे:"
+  },
+
+  "coaches": {
+    "title": "Coaches Hub",
+
+    "iccToggleShowTrend": "रैंकिंग/रेटिंग ट्रेंड",
+    "iccToggleShowOverview": "ICC रेटिंग ओवरव्यू",
+    "updateRankingButton": "ICC रैंकिंग अपडेट करें",
+    "trendCardTitle": "ICC रैंकिंग और रेटिंग ट्रेंड (2 वर्ष)",
+    "rankLabel": "रैंक",
+    "ratingLabel": "रेटिंग",
+
+    "kpiIccRank": "ICC रैंक",
+    "kpiRating": "रेटिंग",
+    "kpiMatchesCounted": "काउंट किए गए मैच",
+    "kpiPoints": "पॉइंट्स",
+    "kpiWinPct": "विन %",
+    "kpiAvgRunsFor": "औसत रन (हम)",
+    "kpiAvgRunsAgainst": "औसत रन (विपक्ष)",
+    "kpiMatchesPlayed": "खेले गए मैच",
+
+    "performanceToolsTitle": "परफॉर्मेंस टूल्स",
+    "toolPreGame": "प्री-गेम विश्लेषण",
+    "toolPostGame": "पोस्ट-गेम विश्लेषण",
+    "toolPostTournament": "पोस्ट-टूर्नामेंट विश्लेषण",
+    "toolTraining": "ट्रेनिंग टूल्स"
+  },
+
+  "pregame": {
+    "title": "प्री-गेम विश्लेषण",
+
+    "fields": {
+      "opposition": "विपक्ष"
+    },
+
+    "placeholders": {
+      "selectOpposition": "विपक्ष चुनें"
+    },
+
+    "labels": {
+      "matchup": "मैच-अप:",
+      "selectOppositionToUnlockTools": "टूल्स अनलॉक करने के लिए एक विपक्ष चुनें।",
+      "toolsUnlockOnceDifferentOpposition": "जैसे ही आप अपनी टीम से अलग विपक्ष चुनती हैं, टूल्स अनलॉक हो जाते हैं।"
+    },
+
+    "alerts": {
+      "chooseValidOpposition": "कृपया मान्य विपक्ष चुनें (अपनी ही टीम नहीं)।",
+      "selectAtLeastOneOppositionBatter": "कम से कम एक विपक्षी बैटर चुनें।",
+      "selectAtLeastOneOurBowler": "हमारी कम से कम एक bowler चुनें।",
+      "selectGround": "कृपया एक ग्राउंड चुनें।"
+    },
+
+    "errors": {
+      "couldNotLoadCountries": "देश लोड नहीं हो सके।",
+      "couldNotLoadOpponentPlayers": "विपक्षी प्लेयर्स लोड नहीं हो सके।",
+      "couldNotLoadOurBowlers": "हमारी bowlers लोड नहीं हो सकीं।",
+      "couldNotGenerateGamePlanPdf": "गेम प्लान PDF जनरेट नहीं हो सका।",
+      "failedToLoadVenues": "ग्राउंड/वेन्यू लोड नहीं हो सके।",
+      "failedToLoadInsights": "इनसाइट्स लोड नहीं हो सके।",
+      "failedToLoadKeyOppositionPlayers": "विपक्ष की मुख्य प्लेयर्स लोड नहीं हो सकीं।",
+      "failedToLoadStrengthsWeaknesses": "ताकत और कमजोरियाँ लोड नहीं हो सकीं।",
+      "couldNotComputeBattingTargets": "batting टार्गेट्स की गणना नहीं हो सकी।"
+    },
+
+    "cards": {
+      "gamePlan": {
+        "title": "गेम प्लान (PDF)",
+        "description": "मैच-अप्स, सुझाए गए ज़ोन और फेज़ प्लान। प्री-गेम मीटिंग के लिए कोच-रेडी PDF के रूप में तैयार होता है।",
+        "button": "लाइन-अप चुनें और जनरेट करें"
+      },
+      "keyOpposition": {
+        "title": "विपक्ष की मुख्य प्लेयर्स",
+        "description": "टॉप तीन बैटिंग (SR / औसत) और bowling (विकेट्स / इकोनॉमी) में, आपकी टूर्नामेंट डेटाबेस के आधार पर।",
+        "button": "शॉर्टलिस्ट देखें"
+      },
+      "battingTargets": {
+        "title": "Batting टार्गेट्स",
+        "description": "ग्राउंड, विपक्ष और हमारी टीम के अनुसार एडजस्ट किया हुआ par स्कोर, टार्गेट टोटल और फेज़-वाइज़ रन ब्रेकडाउन।",
+        "button": "कनफिगर करें और कैल्कुलेट करें"
+      },
+      "venueToss": {
+        "title": "ग्राउंड और टॉस इनसाइट्स",
+        "description": "ग्राउंड स्कोरिंग ट्रेंड, पहली innings की औसत और समय के अनुसार टॉस के पैटर्न।",
+        "button": "ग्राउंड चुनें"
+      },
+      "strengthsWeaknesses": {
+        "title": "ताकत और कमजोरियाँ",
+        "description": "विपक्ष की batting और bowling ट्रेंड्स — फेज़ और स्टाइल के हिसाब से: स्कोरिंग पैटर्न, dot ball रेट और dismissals।",
+        "button": "रिपोर्ट खोलें"
+      },
+      "doDonts": {
+        "title": "Do & Don’ts",
+        "description": "प्लेयर्स के लिए हाई-सिग्नल ब्रीफिंग: क्या जोर देना है, क्या अवॉयड करना है। (एंडपॉइंट बाद में जोड़ा जा सकता है।)"
+      }
+    },
+
+    "modals": {
+      "gamePlan": {
+        "title": "गेम प्लान — लाइन-अप चुनें",
+        "oppositionBatters": "विपक्षी बैटर्स",
+        "noPlayers": "कोई प्लेयर नहीं",
+        "selectTop6": "टॉप 6 चुनें",
+        "battersAccordion": "Batters",
+        "ourBowlers": "हमारी bowlers",
+        "noBowlers": "कोई bowler नहीं",
+        "bowlersAccordion": "Bowlers",
+        "generatePdfButton": "PDF जनरेट करें"
+      },
+
+      "venueToss": {
+        "title": "ग्राउंड और टॉस इनसाइट्स",
+        "groundLabel": "ग्राउंड",
+        "timeOfDayLabel": "दिन का समय (वैकल्पिक)",
+        "timeOfDayAny": "कोई भी",
+        "showInsightsButton": "इनसाइट्स दिखाएँ",
+        "avgFirstInningsScore": "औसत पहली innings स्कोर",
+        "winRateBattingFirst": "पहले बैटिंग करते हुए जीत %", 
+        "mostCommonTossDecision": "सबसे आम टॉस निर्णय",
+        "tossDistributionLabel": "टॉस निर्णय:"
+      },
+
+      "keyOpposition": {
+        "title": "विपक्ष की मुख्य प्लेयर्स",
+        "topBattersHeading": "टॉप बैटर्स (Strike Rate • औसत)",
+        "topBowlersHeading": "टॉप bowlers (Wickets • इकोनॉमी)",
+        "noQualifiedBatters": "कोई योग्य बैटर नहीं",
+        "noQualifiedBowlers": "कोई योग्य bowler नहीं"
+      },
+
+      "strengthsWeaknesses": {
+        "title": "विपक्ष की ताकत और कमजोरियाँ",
+        "battingStrengths": "Batting — मुख्य ताकतें",
+        "battingWeaknesses": "Batting — मुख्य कमजोरियाँ",
+        "bowlingStrengths": "Bowling — मुख्य ताकतें",
+        "bowlingWeaknesses": "Bowling — मुख्य कमजोरियाँ",
+        "detailBattingByStyle": "विवरण — bowler टाइप के अनुसार batting",
+        "detailBattingByPhase": "विवरण — फेज़ के अनुसार batting",
+        "detailBowlingByPhase": "विवरण — फेज़ के अनुसार bowling",
+        "detailBowlingByType": "विवरण — टाइप के अनुसार bowling"
+      },
+
+      "battingTargets": {
+        "title": "Batting टार्गेट्स — ग्राउंड और विपक्ष के अनुसार",
+        "groundLabel": "ग्राउंड",
+        "timeOfDayLabel": "दिन का समय (वैकल्पिक)",
+        "timeOfDayAny": "कोई भी",
+        "recencyWindowLabel": "रिसेंसी विंडो (दिन)",
+        "includeRainLabel": "बारिश / DLS शामिल करें",
+        "computeButton": "टार्गेट्स कैल्कुलेट करें",
+        "venuePar": "ग्राउंड par (20 ओवर)",
+        "adjustedPar": "एडजस्टेड par (विपक्ष और हम)",
+        "targetTotal": "टार्गेट टोटल (+10% मार्जिन)",
+        "phaseTargetsHeading": "फेज़-वाइज़ टार्गेट्स",
+        "rpo": "RPO"
+      },
+
+      "common": {
+        "type": "टाइप",
+        "balls": "गेंदें",
+        "dotPct": "Dot %",
+        "boundaryPct": "Boundary %",
+        "outsPerBall": "आउट/बॉल",
+        "phase": "फेज़",
+        "overs": "ओवर",
+        "runs": "रन",
+        "wicketsPerBall": "Wkts/बॉल"
+      }
+    }
+  },
+
+  "postGame": {
+    "filters": {
+      "categoryLabel": "कैटेगरी",
+      "matchBrasilLabel": "मैच (सिर्फ ब्राज़ील)",
+      "noBrasilMatches": "कोई ब्राज़ील मैच नहीं मिला"
+    },
+    "alerts": {
+      "selectMatchWithBrasil": "कृपया ऐसा मैच चुनें जिसमें ब्राज़ील शामिल हो।",
+      "selectMatch": "कृपया पहले मैच चुनें।"
+    },
+    "errors": {
+      "matchesLoad": "मैच लोड नहीं हो सके।",
+      "kpisLoad": "इस मैच के KPIs लोड नहीं हो सके।",
+      "teamsLoad": "इस मैच के लिए टीमें लोड नहीं हो सकीं।",
+      "playersLoad": "इस टीम के लिए प्लेयर्स लोड नहीं हो सके।",
+      "playerSummaryLoad": "प्लेयर सारांश लोड नहीं हो सका।"
+    },
+    "cards": {
+      "matchKpisTitle": "मैच KPIs",
+      "matchKpisDescription": "Batting, bowling और fielding KPIs — Powerplay, Middle overs, Death overs और पूरे मैच के हिसाब से विभाजित।",
+      "playerSummaryTitle": "प्लेयर सारांश",
+      "playerSummaryDescription": "इस मैच में किसी भी प्लेयर के batting, bowling और fielding का त्वरित स्नैपशॉट।"
+    },
+    "kpiModal": {
+      "title": "KPIs — टार्गेट्स बनाम रिज़ल्ट",
+      "kpisMetLabel": "पूरे किए गए KPIs",
+      "showFailedOnlyLabel": "सिर्फ फेल्ड दिखाएँ",
+      "metShort": "पूरा",
+      "noKpisSection": "इस सेक्शन में कोई KPI नहीं।",
+      "tableHeaderKpi": "KPI",
+      "tableHeaderTarget": "टार्गेट",
+      "tableHeaderResult": "रिज़ल्ट",
+      "tableHeaderStatus": "स्टेटस",
+      "statusMet": "पूरा",
+      "statusMissed": "मिस",
+      "statusNA": "N/A"
+    },
+    "batting": {
+      "scoreSectionTitle": "स्कोर",
+      "runsBallsLabel": "रन (गेंदें)",
+      "strikeRateLabel": "स्ट्राइक रेट",
+      "strikeRateSub": "हर 100 गेंद पर रन",
+      "foursSixesLabel": "4s / 6s",
+      "scoringShotsSectionTitle": "Scoring shots",
+      "scoringShotPctLabel": "Scoring shot %",
+      "boundaryPctLabel": "Boundary %",
+      "boundaryPctSub": "4s + 6s कुल गेंदों का %",
+      "phasesSectionTitle": "फेज़",
+      "dismissalSectionTitle": "Dismissal"
+    },
+    "bowling": {
+      "noData": "इस मैच में इस प्लेयर के लिए कोई bowling डेटा नहीं।",
+      "figuresSectionTitle": "फिगर्स",
+      "figuresLabel": "Overs–Dots–Runs–Wickets",
+      "economyLabel": "इकोनॉमी",
+      "economySub": "प्रति ओवर दिए गए रन",
+      "dotBallPctLabel": "Dot ball %",
+      "dotBallPctSub": "कानूनी गेंदों में dots का %",
+      "extrasSectionTitle": "Extras और boundaries",
+      "widesLabel": "Wides",
+      "noBallsLabel": "No balls",
+      "boundaryBallsLabel": "Boundary गेंदें",
+      "phasesSectionTitle": "फेज़"
+    },
+    "fielding": {
+      "noData": "इस मैच में इस प्लेयर के लिए कोई fielding डेटा नहीं।",
+      "involvementSectionTitle": "इन्वॉल्वमेंट",
+      "ballsFieldedLabel": "फ़ील्ड की गई गेंदें",
+      "cleanPickupsLabel": "क्लीन पिक-अप",
+      "fumblesLabel": "फंबल्स",
+      "overthrowsConcededLabel": "दिए गए overthrows",
+      "catchingSectionTitle": "Catching और run-outs",
+      "catchesTakenLabel": "लगे हुए catches",
+      "dropsLabel": "ड्रॉप्स / मिस्ड catches",
+      "runOutsDirectLabel": "Run-outs (डायरेक्ट)",
+      "runOutsAssistLabel": "Run-outs (असिस्ट)",
+      "qualitySectionTitle": "क्वालिटी",
+      "cleanHandsPctLabel": "Clean hands %",
+      "chanceConversionPctLabel": "Chance conversion %"
+    },
+    "common": {
+      "runsWord": "रन",
+      "ballsWord": "गेंदें",
+      "scoringShotsWord": "scoring shots",
+      "dotBallsWord": "dot balls"
+    },
+    "player": {
+      "noBattingData": "इस मैच में इस प्लेयर के लिए कोई batting डेटा नहीं।",
+      "noBowlingData": "इस मैच में इस प्लेयर के लिए कोई bowling डेटा नहीं।",
+      "noFieldingData": "इस मैच में इस प्लेयर के लिए कोई fielding डेटा नहीं।"
+    },
+    "playerModal": {
+      "title": "प्लेयर सारांश",
+      "teamLabel": "टीम",
+      "playerLabel": "प्लेयर",
+      "noTeamsFound": "कोई टीम नहीं मिली",
+      "noPlayersFound": "कोई प्लेयर नहीं मिला",
+      "playerHeading": "प्लेयर",
+      "teamHeading": "टीम",
+      "selectPrompt": "सारांश देखने के लिए टीम और प्लेयर चुनें।"
+    }
+  },
+
+  "postTournament": {
+    "filters": {
+      "categoryLabel": "कैटेगरी",
+      "tournamentLabel": "टूर्नामेंट",
+      "teamLabel": "टीम",
+      "playerLabel": "प्लेयर",
+      "noTournaments": "कोई टूर्नामेंट नहीं मिला",
+      "noTeams": "कोई टीम नहीं",
+      "noPlayers": "कोई प्लेयर नहीं"
+    },
+    "errors": {
+      "tournamentsLoad": "इस कैटेगरी के लिए टूर्नामेंट लोड नहीं हो सके।",
+      "teamsLoad": "इस टूर्नामेंट के लिए टीमें लोड नहीं हो सकीं।",
+      "playersLoad": "इस टीम के लिए प्लेयर्स लोड नहीं हो सके।",
+      "playerSummaryLoad": "प्लेयर टूर्नामेंट सारांश लोड नहीं हो सका।",
+      "teamSummaryLoad": "टीम टूर्नामेंट सारांश लोड नहीं हो सका।"
+    },
+    "cards": {
+      "playerSummaryTitle": "प्लेयर टूर्नामेंट सारांश",
+      "playerSummaryDescription": "चुनी गई प्लेयर के लिए पूरे टूर्नामेंट का batting, bowling और fielding स्नैपशॉट।",
+      "teamSummaryTitle": "टीम टूर्नामेंट सारांश",
+      "teamSummaryDescription": "चुनी गई टीम के लिए पूरे टूर्नामेंट का ओवरव्यू — batting, bowling, fielding और मुख्य leaders।"
+    },
+    "player": {
+      "modalTitle": "प्लेयर टूर्नामेंट सारांश",
+      "labels": {
+        "player": "प्लेयर",
+        "team": "टीम"
+      },
+      "noBattingData": "इस टूर्नामेंट में इस प्लेयर के लिए कोई batting डेटा नहीं।",
+      "noBowlingData": "इस टूर्नामेंट में इस प्लेयर के लिए कोई bowling डेटा नहीं।",
+      "noFieldingData": "इस टूर्नामेंट में इस प्लेयर के लिए कोई fielding डेटा नहीं।",
+      "selectPrompt": "ऊपर टूर्नामेंट, टीम और प्लेयर चुनें, फिर यह कार्ड दोबारा खोलें ताकि उनका टूर्नामेंट सारांश देखें।"
+    },
+    "teamSummary": {
+      "modalTitle": "टीम टूर्नामेंट सारांश",
+      "selectTournamentAndTeamFirst": "कृपया पहले टूर्नामेंट और टीम चुनें।",
+      "selectPrompt": "टूर्नामेंट और टीम चुनें, फिर सारांश जनरेट करें।",
+      "selectPromptModal": "ऊपर टूर्नामेंट और टीम चुनें, फिर यह कार्ड दोबारा खोलें ताकि सारांश जनरेट हो सके।",
+      "overviewSectionTitle": "ओवरव्यू",
+      "overviewMatchesLabel": "मैच",
+      "overviewWinsLabel": "जीत",
+      "overviewLossesLabel": "हार",
+      "overviewNoResultLabel": "नो रिज़ल्ट",
+      "overviewWinPctLabel": "विन %",
+      "overviewRunRateForLabel": "Run rate (हम)",
+      "overviewNetRunRateLabel": "Net run rate"
+    },
+    "batting": {
+      "sectionTitle": "टीम batting",
+      "scoreSectionTitle": "स्कोर (टूर्नामेंट)",
+      "runsBallsLabel": "रन (गेंदें)",
+      "strikeRateLabel": "स्ट्राइक रेट",
+      "strikeRateSub": "हर 100 गेंद पर रन",
+      "foursSixesLabel": "4s / 6s",
+      "onesTwosThreesLabel": "1 / 2 / 3 रन",
+      "scoringShotsSectionTitle": "Scoring shots",
+      "scoringShotPctLabel": "Scoring shot %",
+      "boundaryPctLabel": "Boundary %",
+      "boundaryPctSub": "4s + 6s कुल गेंदों का %",
+      "phasesSectionTitle": "फेज़ (टूर्नामेंट)",
+      "matchSummarySectionTitle": "टूर्नामेंट सारांश (मैच-दर-मैच)",
+      "runsPer20Label": "हर 20 ओवर में बनाए गए रन",
+      "tableHeaderPhase": "फेज़",
+      "tableHeaderRuns": "रन",
+      "tableHeaderSsPctShort": "SS%",
+      "tableHeaderOvers": "ओवर",
+      "tableHeaderRunRateShort": "RR",
+      "tableHeaderWickets": "Wickets"
+    },
+    "bowling": {
+      "sectionTitle": "टीम bowling",
+      "figuresSectionTitle": "फिगर्स (टूर्नामेंट)",
+      "figuresLabel": "Overs–Dots–Runs–Wickets",
+      "economyLabel": "इकोनॉमी",
+      "economySub": "प्रति ओवर दिए गए रन",
+      "dotBallPctLabel": "Dot ball %",
+      "extrasSectionTitle": "Extras और boundaries",
+      "phasesSectionTitle": "फेज़ (टूर्नामेंट)",
+      "matchSummarySectionTitle": "टूर्नामेंट सारांश (मैच-दर-मैच)",
+      "runsPer20ConcededLabel": "हर 20 ओवर में दिए गए रन",
+      "economyRateLabel": "इकोनॉमी रेट",
+      "dotBallPctTeamLabel": "Dot ball %",
+      "tableHeaderPhase": "फेज़",
+      "tableHeaderRunsConceded": "रन",
+      "tableHeaderDotPctShort": "Dot %",
+      "tableHeaderOvers": "ओवर",
+      "tableHeaderEconomyShort": "Eco",
+      "tableHeaderWicketsShort": "Wkts"
+    },
+    "fielding": {
+      "sectionTitleInvolvement": "इन्वॉल्वमेंट (टूर्नामेंट)",
+      "sectionTitleCatching": "Catching और run-outs",
+      "sectionTitleQuality": "क्वालिटी",
+      "sectionTitleTeam": "Fielding",
+      "ballsFieldedLabel": "फ़ील्ड की गई गेंदें",
+      "cleanPickupsLabel": "क्लीन पिक-अप",
+      "fumblesLabel": "फंबल्स",
+      "overthrowsConcededLabel": "दिए गए overthrows",
+      "catchesTakenLabel": "लगे हुए catches",
+      "dropsLabel": "ड्रॉप्स / मिस्ड catches",
+      "runOutsDirectLabel": "Run-outs (डायरेक्ट)",
+      "runOutsAssistLabel": "Run-outs (असिस्ट)",
+      "cleanHandsPctLabel": "Clean hands %",
+      "chanceConversionPctLabel": "Chance conversion %",
+      "catchesLabel": "Catches",
+      "stumpingsLabel": "Stumpings",
+      "runOutsLabel": "Run-outs",
+      "dropsShortLabel": "ड्रॉप्स",
+      "missedRunOutsLabel": "मिस्ड ROs",
+      "overthrowsLabel": "Overthrows",
+      "widesLabel": "Wides",
+      "noBallsLabel": "No balls"
+    },
+    "leaders": {
+      "sectionTitle": "Leaders",
+      "battingHeading": "Batting",
+      "bowlingHeading": "Bowling",
+      "fieldingHeading": "Fielding",
+      "battingRunsSuffix": "रन",
+      "battingSrShort": "SR",
+      "bowlingWicketsSuffix": "wickets",
+      "bowlingEconShort": "Econ",
+      "fieldingCatchesShort": "catches",
+      "fieldingRunOutsShort": "ROs",
+      "fieldingStumpingsShort": "Stmps",
+      "noBattingLeaders": "अभी कोई batting leader नहीं।",
+      "noBowlingLeaders": "अभी कोई bowling leader नहीं।",
+      "noFieldingLeaders": "अभी कोई fielding leader नहीं।"
+    }
+  },
+
+  "training": {
+    "interactiveFieldDescription": "प्लेयर्स को ड्रैग-एंड-ड्रॉप करके फ़ील्ड सेट करें। Men/Women, Powerplay/Middle/Death ओवर, सॉफ्ट रूल चेक्स और PDF एक्सपोर्ट।",
+    "savePdfButton": "PDF सेव करें",
+    "bowlerNamePlaceholder": "Bowler का नाम",
+    "bowlerLabel": "Bowler",
+    "dragFieldersTitle": "फ़ील्डर्स को ग्राउंड पर ड्रैग करें",
+    "softRuleChecksTitle": "सॉफ्ट रूल चेक्स",
+    "handHint": "Off/Leg side को प्रभावित करता है",
+    "dragToPlaceHint": "प्लेस करने के लिए ड्रैग करें",
+    "rules": {
+      "outsideInnerPrefix": "इनर रिंग के बाहर",
+      "offSideMinPrefix": "Off side पर कम से कम 4",
+      "legBehindPrefix": "Leg side पर स्क्वायर के पीछे अधिकतम 2"
+    }
+  },
+
+  "login": {
+    "appTitle": "Cricket Performance Hub",
+    "signInHeading": "साइन इन",
+    "subtitle": "मैच डेटा और विश्लेषण टूल्स तक पहुँच के लिए अपनी टीम द्वारा दिया गया अकाउंट उपयोग करें।",
+    "emailLabel": "ई-मेल",
+    "passwordLabel": "पासवर्ड",
+    "signInButton": "साइन इन",
+    "signingInButton": "साइन इन हो रहा है...",
+    "restrictedNote": "एक्सेस केवल टीम स्टाफ के लिए है। अगर आपको अकाउंट चाहिए तो अपनी बोर्ड से संपर्क करें।"
+  },
+
+  "appShell": {
+    "navDashboard": "डैशबोर्ड",
+    "navCoachesHub": "Coaches Hub",
+    "roleAdmin": "ऐडमिन",
+    "roleUser": "यूज़र",
+    "fixturesAdmin": "फिक्स्चर और कैलेंडर",
+    "themeBranding": "थीम और ब्रांडिंग",
+    "signOut": "साइन आउट"
+  },
+
+  "darkMode": {
+    "light": "लाइट",
+    "dark": "डार्क"
+  },
+
+  "fixtures": {
+  "adminOnly": "केवल एडमिन ही मैच और कैलेंडर को प्रबंधित कर सकते हैं।",
+  "title": "मैच और कैलेंडर",
+  "description": "अपने बोर्ड के आने वाले मैचों की योजना बनाएं। ये मैच डैशबोर्ड पर \"अगला मैच\" कार्ड को चलाते हैं और प्लानिंग टूल्स के लिए भी उपयोग किए जा सकते हैं।",
+  "addFixtureTitle": "मैच जोड़ें",
+
+
+  "errors": {
+    "loadFixtures": "मैच लोड नहीं किए जा सके।",
+    "loadOpponents": "प्रतिद्वंदी टीमें लोड नहीं की जा सकीं।",
+    "loadTournaments": "टूर्नामेंट लोड नहीं किए जा सके।",
+    "createFixture": "मैच बनाया नहीं जा सका।",
+    "addOpponent": "प्रतिद्वंदी टीम जोड़ी नहीं जा सकी।",
+    "addTournament": "टूर्नामेंट जोड़ा नहीं जा सका।"
+  },
+
+  "validation": {
+    "dateAndOpponent": "कृपया एक तारीख और प्रतिद्वंदी चुनें।"
+  },
+
+  "prompts": {
+    "addOpponent": "नए प्रतिद्वंदी देश का नाम दर्ज करें",
+    "addTournament": "नए टूर्नामेंट का नाम दर्ज करें"
+  },
+
+  "labels": {
+    "date": "तारीख",
+    "opponent": "प्रतिद्वंदी",
+    "tournament": "टूर्नामेंट",
+    "timeOfDay": "दिन का समय",
+    "ground": "ग्राउंड / स्थल"
+  },
+
+  "buttons": {
+    "addOpponent": "+ नई टीम जोड़ें",
+    "addTournament": "+ नया टूर्नामेंट जोड़ें",
+    "addFixture": "मैच जोड़ें",
+    "saving": "सेव हो रहा है..."
+  },
+
+  "placeholders": {
+    "loadingTeams": "टीमें लोड हो रही हैं...",
+    "selectOpponent": "प्रतिद्वंदी चुनें",
+    "loadingTournaments": "टूर्नामेंट लोड हो रहे हैं...",
+    "selectTournamentOptional": "वैकल्पिक: टूर्नामेंट चुनें"
+  },
+
+  "upcomingTitle": "आगामी मैच",
+  "loadingFixtures": "लोड हो रहा है…",
+  "noUpcoming": "अभी तक कोई आगामी मैच शेड्यूल नहीं है।",
+  "unknownMonth": "अज्ञात",
+  "tbc": "बाद में तय होगा",
+  "vs": "vs",
+  "at": "@",
+
+  "timeOfDay": {
+    "day": "दिन",
+    "dayNight": "दिन/रात",
+    "night": "रात"
+  },
+
+  "footerNote": "जैसे-जैसे आप यहाँ मैच जोड़ते हैं, डैशबोर्ड को हमेशा पता रहेगा कि अगला क्या आने वाला है।"
+}
+
+}
