@@ -16,6 +16,7 @@ import {
   PointElement,
   Tooltip,
   Legend,
+  ScatterController,
 } from "chart.js";
 
 import api from "../api";
@@ -37,7 +38,8 @@ ChartJS.register(
   LineElement,
   PointElement,
   Tooltip,
-  Legend
+  Legend,
+  ScatterController
 );
 
 const DetailedMatchTab = ({ selectedMatch, teamCategory }) => {
