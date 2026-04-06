@@ -4,7 +4,7 @@ import { useAuth } from "../auth/AuthContext";
 import { useTheme } from "../theme/ThemeContext";
 import { useLanguage } from "../language/LanguageContext";
 
-const API_BASE = "http://127.0.0.1:8001"; // adjust if needed
+const API_BASE = process.env.REACT_APP_API_BASE_URL;
 
 const FixturesPage = () => {
   const { user } = useAuth();
