@@ -1,8 +1,13 @@
-// src/api.js
 import axios from "axios";
 
+const baseURL = process.env.REACT_APP_API_BASE_URL;
+
+if (!baseURL) {
+  throw new Error("REACT_APP_API_BASE_URL is not defined");
+}
+
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL || "http://127.0.0.1:8001", // fallback in case env variable is missing
+  baseURL,
 });
 
 export default api;
