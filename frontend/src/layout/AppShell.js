@@ -120,16 +120,6 @@ const AppShell = () => {
               >
                 {tt("appShell.navCoachesHub", "Coaches Hub")}
               </NavLink>
-              <NavLink
-                to="/tournaments"
-                className={({ isActive }) =>
-                  "text-decoration-none small " +
-                  (isActive ? "fw-bold" : "") +
-                  " text-light"
-                }
-              >
-                {tt("appShell.navTournaments", "Tournaments")}
-              </NavLink>
             </nav>
 
             {/* Dark mode toggle */}
