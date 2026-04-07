@@ -807,6 +807,75 @@
     "indexLabel": "Pressure index",
     "battingLabel": "batting",
     "noData": "No momentum data available for this match."
+  },
+
+  "tournamentAnalysis": {
+    "title": "Tournament analysis",
+    "subtitle": "Choose a tournament, then explore results, standings and leaderboards.",
+    "loadingTournaments": "Loading tournaments…",
+    "noTournaments": "No tournaments found for this team yet. Once tournaments are recorded, you’ll be able to analyse them here.",
+    "tournamentLabel": "Tournament",
+    "tournamentPlaceholder": "Select tournament",
+    "scopeLabel": "Leaderboard scope",
+    "scopeOurPlayers": "Our players",
+    "scopeTournamentWide": "Tournament-wide",
+    "selectedTournamentLabel": "Selected tournament"
+  },
+
+  "tournament": {
+    "loading": "Loading tournaments…",
+    "error": "There was a problem loading tournaments.",
+    "selectTournamentHint": "Select a tournament above to view tournament details.",
+
+    "overviewTitle": "Tournament overview",
+    "preparing": "Preparing tournament page…",
+
+    "resultsTitle": "Match Results",
+    "resultTbc": "Result TBC",
+    "noResults": "No match results available yet.",
+
+    "pointsTableTitle": "Points Table",
+    "teamShort": "Team",
+    "playedShort": "P",
+    "winsShort": "W",
+    "lossesShort": "L",
+    "nrShort": "NR",
+    "pointsShort": "Pts",
+    "nrrShort": "NRR",
+    "noPointsTable": "No points table available yet.",
+
+    "maxPtsShort": "Max",
+    "statusQualified": "Qualified",
+    "statusEliminated": "Eliminated",
+    "statusAlive": "Alive",
+    "cutoffLabel": "Cutoff",
+    "pointsTableNote": "Green = mathematically qualified. Red = mathematically eliminated. Cutoff reflects the current qualification line for this stage.",
+
+
+    "qualificationTitle": "Qualification",
+    "currentQualifiersLabel": "Current qualifying positions",
+    "qualificationPlaceholder": "Round-based qualification logic can be added once the database supports tournament stages.",
+    "noQualificationData": "No qualification data available yet.",
+
+    "btnBatting": "Batting Leaderboards",
+    "btnBattingSub": "Tournament batting leaders",
+    "btnBowling": "Bowling Leaderboards",
+    "btnBowlingSub": "Tournament bowling leaders",
+    "btnFielding": "Fielding Leaderboards",
+    "btnFieldingSub": "Tournament fielding leaders",
+
+    "battingTitle": "Batting leaderboards",
+    "battingPlaceholder": "Batting leaderboard content will expand here.",
+    "bowlingTitle": "Bowling leaderboards",
+    "bowlingPlaceholder": "Bowling leaderboard content will expand here.",
+    "fieldingTitle": "Fielding leaderboards",
+    "fieldingPlaceholder": "Fielding leaderboard content will expand here.",
+
+    "stageShort": "Next stage",
+    "ourTeamBadge": "US",
+    "ourMatchBadge": "OUR MATCH"
+
   }
 }
+
 
