@@ -14,6 +14,7 @@ import { AuthProvider, useAuth } from "./auth/AuthContext";
 import AppShell from "./layout/AppShell";
 import HomeDashboard from "./pages/HomeDashboard";
 import CoachesHub from "./pages/CoachesHub";
+import Tournaments from "./pages/TournamentAnalysisPage";
 import LoginPage from "./pages/LoginPage";
 import FixturesPage from "./pages/FixturesPage";
 
@@ -52,6 +53,7 @@ const AppRoutes = () => {
           <Route path="/coaches/training" element={<Training />} />
 
           <Route path="/match-analysis" element={<MatchAnalysisPage />} />
+          <Route path="/tournaments" element={<Tournaments />} />
 
           {/* Settings */}
           <Route path="/fixtures" element={<FixturesPage />} />

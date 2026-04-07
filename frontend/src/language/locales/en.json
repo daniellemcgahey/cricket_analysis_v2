@@ -511,6 +511,7 @@
     "appShell": {
     "navDashboard": "Dashboard",
     "navCoachesHub": "Coaches Hub",
+    "navTournaments": "Tournaments",
     "roleAdmin": "Admin",
     "roleUser": "User",
     "fixturesAdmin": "Fixtures & calendar",
