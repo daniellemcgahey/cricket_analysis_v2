@@ -8786,7 +8786,7 @@ def get_tournament_fielding_leaders(payload: TournamentFieldingLeadersPayload):
               WHERE LOWER(be2.fielding_style) IN ('wk normal', 'wk dive')
           )
         GROUP BY fc.fielder_id
-        HAVING total_fielding_events > 20
+        HAVING total_fielding_events > 10
         ORDER BY clean_hands_pct DESC
         LIMIT 10
     """, country_names + [tournament_id])
