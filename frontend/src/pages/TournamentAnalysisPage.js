@@ -1,6 +1,6 @@
 // src/pages/TournamentAnalysisPage.jsx
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import { Card, Alert, Spinner, Form, Row, Col } from "react-bootstrap";
+import React, { useContext, useEffect, useMemo, useState, } from "react";
+import { Card, Alert, Spinner, Form, Row, Col, Modal } from "react-bootstrap";
 import api from "../api";
 import { useLanguage } from "../language/LanguageContext";
 import DarkModeContext from "../DarkModeContext";
@@ -8,6 +8,8 @@ import GlassCard from "../components/GlassCard";
 import { useTheme } from "../theme/ThemeContext";
 import useUITheme from "../theme/useUITheme";
 import { useAuth } from "../auth/AuthContext";
+import { normalizeName, getFlagUrlForTeam } from "../utils/flags";
+import MatchScorecardPage from "./MatchScorecardPage";
 
 const TournamentAnalysisPage = () => {
   const { t } = useLanguage();
@@ -32,6 +34,28 @@ const TournamentAnalysisPage = () => {
 
   const [tournamentMatches, setTournamentMatches] = useState([]);
   const [tournamentTable, setTournamentTable] = useState([]);
+
+  const [battingLeaders, setBattingLeaders] = useState({});
+  const [loadingBattingLeaders, setLoadingBattingLeaders] = useState(false);
+  const [battingLeadersError, setBattingLeadersError] = useState("");
+  const [selectedBattingStat, setSelectedBattingStat] = useState("Most Runs");
+  const [ourBattingPlayerNames, setOurBattingPlayerNames] = useState(new Set());
+  const [battingPlayerCountryMap, setBattingPlayerCountryMap] = useState({});
+
+  const [bowlingLeaders, setBowlingLeaders] = useState({});
+  const [loadingBowlingLeaders, setLoadingBowlingLeaders] = useState(false);
+  const [bowlingLeadersError, setBowlingLeadersError] = useState("");
+  const [selectedBowlingStat, setSelectedBowlingStat] = useState("Most Wickets");
+  const [bowlingPlayerCountryMap, setBowlingPlayerCountryMap] = useState({});
+
+  const [fieldingLeaders, setFieldingLeaders] = useState({});
+  const [loadingFieldingLeaders, setLoadingFieldingLeaders] = useState(false);
+  const [fieldingLeadersError, setFieldingLeadersError] = useState("");
+  const [selectedFieldingStat, setSelectedFieldingStat] = useState("Most Catches");
+  const [fieldingPlayerCountryMap, setFieldingPlayerCountryMap] = useState({});
+
+  const [selectedResultMatch, setSelectedResultMatch] = useState(null);
+  const [showScorecardModal, setShowScorecardModal] = useState(false);
 
   const cardStyle = {
     backgroundColor: "var(--color-surface-elevated)",
@@ -66,6 +90,270 @@ const TournamentAnalysisPage = () => {
 
     fetchTournaments();
   }, [teamCategory]);
+
+  useEffect(() => {
+    if (
+      activeDetail !== "batting" ||
+      !selectedTournament ||
+      battingStatOptions.length === 0 ||
+      tournamentMatches.length === 0
+    ) {
+      return;
+    }
+
+    const fetchBattingLeaders = async () => {
+      try {
+        setLoadingBattingLeaders(true);
+        setBattingLeadersError("");
+
+        const allTournamentTeams = Array.from(
+          new Set(
+            tournamentMatches.flatMap((m) => [m.team_a, m.team_b]).filter(Boolean)
+          )
+        ).sort();
+
+        const visiblePayload = {
+          team_category: teamCategory,
+          tournament: selectedTournament,
+          countries: showOnlyOurPlayers ? [teamName] : allTournamentTeams,
+        };
+
+        const visibleRes = await api.post("/tournament-leaders/batting", visiblePayload);
+        const visibleData = visibleRes.data || {};
+        setBattingLeaders(visibleData);
+
+        // Build player -> country map by querying each team separately
+        const perTeamResponses = await Promise.all(
+          allTournamentTeams.map(async (countryName) => {
+            try {
+              const res = await api.post("/tournament-leaders/batting", {
+                team_category: teamCategory,
+                tournament: selectedTournament,
+                countries: [countryName],
+              });
+
+              return {
+                countryName,
+                data: res.data || {},
+              };
+            } catch (err) {
+              console.error(`Error loading batting leaders for ${countryName}`, err);
+              return {
+                countryName,
+                data: {},
+              };
+            }
+          })
+        );
+
+        const nextPlayerCountryMap = {};
+
+        perTeamResponses.forEach(({ countryName, data }) => {
+          Object.values(data).forEach((list) => {
+            if (!Array.isArray(list)) return;
+
+            list.forEach((player) => {
+              const key = normalizeName(player?.name);
+              if (key) {
+                nextPlayerCountryMap[key] = countryName;
+              }
+            });
+          });
+        });
+
+        setBattingPlayerCountryMap(nextPlayerCountryMap);
+      } catch (err) {
+        console.error("Error loading batting leaders", err);
+        console.error("Batting leader response detail:", err?.response?.data);
+        setBattingLeaders({});
+        setBattingPlayerCountryMap({});
+        setBattingLeadersError(
+          err?.response?.data?.detail ||
+            err.message ||
+            "Error loading batting leaderboards."
+        );
+      } finally {
+        setLoadingBattingLeaders(false);
+      }
+    };
+
+    fetchBattingLeaders();
+  }, [
+    activeDetail,
+    selectedTournament,
+    teamCategory,
+    showOnlyOurPlayers,
+    teamName,
+    tournamentMatches,
+  ]);
+
+  useEffect(() => {
+    if (
+      activeDetail !== "bowling" ||
+      !selectedTournament ||
+      bowlingStatOptions.length === 0 ||
+      tournamentMatches.length === 0
+    ) {
+      return;
+    }
+
+    const fetchBowlingLeaders = async () => {
+      try {
+        setLoadingBowlingLeaders(true);
+        setBowlingLeadersError("");
+
+        const allTournamentTeams = Array.from(
+          new Set(
+            tournamentMatches.flatMap((m) => [m.team_a, m.team_b]).filter(Boolean)
+          )
+        ).sort();
+
+        const visiblePayload = {
+          team_category: teamCategory,
+          tournament: selectedTournament,
+          countries: showOnlyOurPlayers ? [teamName] : allTournamentTeams,
+        };
+
+        const visibleRes = await api.post("/tournament-leaders/bowling", visiblePayload);
+        const visibleData = visibleRes.data || {};
+        setBowlingLeaders(visibleData);
+
+        const perTeamResponses = await Promise.all(
+          allTournamentTeams.map(async (countryName) => {
+            try {
+              const res = await api.post("/tournament-leaders/bowling", {
+                team_category: teamCategory,
+                tournament: selectedTournament,
+                countries: [countryName],
+              });
+
+              return { countryName, data: res.data || {} };
+            } catch (err) {
+              console.error(`Error loading bowling leaders for ${countryName}`, err);
+              return { countryName, data: {} };
+            }
+          })
+        );
+
+        const nextPlayerCountryMap = {};
+        perTeamResponses.forEach(({ countryName, data }) => {
+          Object.values(data).forEach((list) => {
+            if (!Array.isArray(list)) return;
+            list.forEach((player) => {
+              const key = normalizeName(player?.name);
+              if (key) nextPlayerCountryMap[key] = countryName;
+            });
+          });
+        });
+
+        setBowlingPlayerCountryMap(nextPlayerCountryMap);
+      } catch (err) {
+        console.error("Error loading bowling leaders", err);
+        setBowlingLeaders({});
+        setBowlingPlayerCountryMap({});
+        setBowlingLeadersError(
+          err?.response?.data?.detail ||
+            err.message ||
+            "Error loading bowling leaderboards."
+        );
+      } finally {
+        setLoadingBowlingLeaders(false);
+      }
+    };
+
+    fetchBowlingLeaders();
+  }, [
+    activeDetail,
+    selectedTournament,
+    teamCategory,
+    showOnlyOurPlayers,
+    teamName,
+    tournamentMatches,
+  ]);
+
+  useEffect(() => {
+    if (
+      activeDetail !== "fielding" ||
+      !selectedTournament ||
+      fieldingStatOptions.length === 0 ||
+      tournamentMatches.length === 0
+    ) {
+      return;
+    }
+
+    const fetchFieldingLeaders = async () => {
+      try {
+        setLoadingFieldingLeaders(true);
+        setFieldingLeadersError("");
+
+        const allTournamentTeams = Array.from(
+          new Set(
+            tournamentMatches.flatMap((m) => [m.team_a, m.team_b]).filter(Boolean)
+          )
+        ).sort();
+
+        const visiblePayload = {
+          team_category: teamCategory,
+          tournament: selectedTournament,
+          countries: showOnlyOurPlayers ? [teamName] : allTournamentTeams,
+        };
+
+        const visibleRes = await api.post("/tournament-leaders/fielding", visiblePayload);
+        const visibleData = visibleRes.data || {};
+        setFieldingLeaders(visibleData);
+
+        const perTeamResponses = await Promise.all(
+          allTournamentTeams.map(async (countryName) => {
+            try {
+              const res = await api.post("/tournament-leaders/fielding", {
+                team_category: teamCategory,
+                tournament: selectedTournament,
+                countries: [countryName],
+              });
+
+              return { countryName, data: res.data || {} };
+            } catch (err) {
+              console.error(`Error loading fielding leaders for ${countryName}`, err);
+              return { countryName, data: {} };
+            }
+          })
+        );
+
+        const nextPlayerCountryMap = {};
+        perTeamResponses.forEach(({ countryName, data }) => {
+          Object.values(data).forEach((list) => {
+            if (!Array.isArray(list)) return;
+            list.forEach((player) => {
+              const key = normalizeName(player?.name);
+              if (key) nextPlayerCountryMap[key] = countryName;
+            });
+          });
+        });
+
+        setFieldingPlayerCountryMap(nextPlayerCountryMap);
+      } catch (err) {
+        console.error("Error loading fielding leaders", err);
+        setFieldingLeaders({});
+        setFieldingPlayerCountryMap({});
+        setFieldingLeadersError(
+          err?.response?.data?.detail ||
+            err.message ||
+            "Error loading fielding leaderboards."
+        );
+      } finally {
+        setLoadingFieldingLeaders(false);
+      }
+    };
+
+    fetchFieldingLeaders();
+  }, [
+    activeDetail,
+    selectedTournament,
+    teamCategory,
+    showOnlyOurPlayers,
+    teamName,
+    tournamentMatches,
+  ]);
 
   useEffect(() => {
     if (!selectedTournament) {
@@ -308,6 +596,191 @@ const TournamentAnalysisPage = () => {
         ? "rgba(255,255,255,0.02)"
         : "rgba(255,255,255,0.55)",
     };
+  };
+
+
+  const battingStatOptions = [
+    "Most Runs",
+    "High Scores",
+    "Highest Averages",
+    "Highest Strike Rates",
+    "Most Fifties and Over",
+    "Most Ducks",
+    "Most Fours",
+    "Most Sixes",
+    "Highest Average Intent",
+    "Highest Scoring Shot %",
+  ];
+
+  const battingStatMeta = {
+    "Most Runs": {
+      keyLabel: t("tournament.battingMostRunsValue") || "Runs",
+      getValue: (p) => p.runs,
+      subFields: [
+        { label: t("tournament.matchesShort") || "Mat", value: (p) => p.matches },
+        { label: t("tournament.inningsShort") || "Inns", value: (p) => p.innings },
+      ],
+    },
+    "High Scores": {
+      keyLabel: t("tournament.battingHighScoreValue") || "High Score",
+      getValue: (p) => p.high_score,
+      subFields: [],
+    },
+    "Highest Averages": {
+      keyLabel: t("tournament.battingAverageValue") || "Average",
+      getValue: (p) => p.average,
+      subFields: [],
+    },
+    "Highest Strike Rates": {
+      keyLabel: t("tournament.battingStrikeRateValue") || "SR",
+      getValue: (p) => p.strike_rate,
+      subFields: [
+        { label: t("tournament.ballsShort") || "Balls", value: (p) => p.balls_faced },
+      ],
+    },
+    "Most Fifties and Over": {
+      keyLabel: t("tournament.battingFiftiesValue") || "50+",
+      getValue: (p) => p.fifties,
+      subFields: [],
+    },
+    "Most Ducks": {
+      keyLabel: t("tournament.battingDucksValue") || "Ducks",
+      getValue: (p) => p.ducks,
+      subFields: [],
+    },
+    "Most Fours": {
+      keyLabel: t("tournament.battingFoursValue") || "Fours",
+      getValue: (p) => p.fours,
+      subFields: [],
+    },
+    "Most Sixes": {
+      keyLabel: t("tournament.battingSixesValue") || "Sixes",
+      getValue: (p) => p.sixes,
+      subFields: [],
+    },
+    "Highest Average Intent": {
+      keyLabel: t("tournament.battingIntentValue") || "Intent",
+      getValue: (p) => p.average_intent,
+      subFields: [],
+    },
+    "Highest Scoring Shot %": {
+      keyLabel: t("tournament.battingScoringShotValue") || "Scoring %",
+      getValue: (p) => `${p.scoring_shot_percentage}%`,
+      subFields: [],
+    },
+  };
+
+  const bowlingStatOptions = [
+    "Most Wickets",
+    "Best Bowling Figures",
+    "Best Averages",
+    "Best Economy Rates",
+    "Best Strike Rates",
+    "Most 3+ Wickets",
+    "Most Dot Balls",
+    "Most Wides",
+    "Most No Balls",
+  ];
+
+  const bowlingStatMeta = {
+    "Most Wickets": {
+      keyLabel: t("tournament.bowlingMostWicketsValue") || "Wickets",
+      getValue: (p) => p.wickets,
+      subFields: [],
+    },
+    "Best Bowling Figures": {
+      keyLabel: t("tournament.bowlingBestFiguresValue") || "Figures",
+      getValue: (p) => p.figures,
+      subFields: [
+        { label: t("tournament.opponentShort") || "Opp", value: (p) => p.opponent },
+      ],
+    },
+    "Best Averages": {
+      keyLabel: t("tournament.bowlingAverageValue") || "Average",
+      getValue: (p) =>
+        typeof p.average === "number" ? p.average.toFixed(2) : p.average,
+      subFields: [
+        { label: t("tournament.wicketsShort") || "Wkts", value: (p) => p.wickets },
+      ],
+    },
+    "Best Economy Rates": {
+      keyLabel: t("tournament.bowlingEconomyValue") || "Econ",
+      getValue: (p) =>
+        typeof p.economy === "number" ? p.economy.toFixed(2) : p.economy,
+      subFields: [],
+    },
+    "Best Strike Rates": {
+      keyLabel: t("tournament.bowlingStrikeRateValue") || "SR",
+      getValue: (p) =>
+        typeof p.strike_rate === "number" ? p.strike_rate.toFixed(2) : p.strike_rate,
+      subFields: [
+        { label: t("tournament.wicketsShort") || "Wkts", value: (p) => p.wickets },
+      ],
+    },
+    "Most 3+ Wickets": {
+      keyLabel: t("tournament.bowlingThreePlusValue") || "3+ Hauls",
+      getValue: (p) => p.value ?? p.three_plus,
+      subFields: [],
+    },
+    "Most Dot Balls": {
+      keyLabel: t("tournament.bowlingDotBallsValue") || "Dots",
+      getValue: (p) => p.dot_balls ?? p.dots ?? p.value,
+      subFields: [],
+    },
+    "Most Wides": {
+      keyLabel: t("tournament.bowlingWidesValue") || "Wides",
+      getValue: (p) => p.wides ?? p.value,
+      subFields: [],
+    },
+    "Most No Balls": {
+      keyLabel: t("tournament.bowlingNoBallsValue") || "No Balls",
+      getValue: (p) => p.no_balls ?? p.value,
+      subFields: [],
+    },
+  };
+
+  const fieldingStatOptions = [
+    "Most Catches",
+    "Most Run Outs",
+    "Most Dismissals",
+    "Best Conversion Rate",
+    "Cleanest Hands",
+    "WK Catches",
+  ];
+
+  const fieldingStatMeta = {
+    "Most Catches": {
+      keyLabel: t("tournament.fieldingCatchesValue") || "Catches",
+      getValue: (p) => p.value,
+      subFields: [],
+    },
+    "Most Run Outs": {
+      keyLabel: t("tournament.fieldingRunOutsValue") || "Run Outs",
+      getValue: (p) => p.value,
+      subFields: [],
+    },
+    "Most Dismissals": {
+      keyLabel: t("tournament.fieldingDismissalsValue") || "Dismissals",
+      getValue: (p) => p.value,
+      subFields: [],
+    },
+    "Best Conversion Rate": {
+      keyLabel: t("tournament.fieldingConversionValue") || "Conversion %",
+      getValue: (p) =>
+        typeof p.value === "number" ? `${p.value.toFixed(1)}%` : p.value,
+      subFields: [],
+    },
+    "Cleanest Hands": {
+      keyLabel: t("tournament.fieldingCleanHandsValue") || "Clean Hands %",
+      getValue: (p) =>
+        typeof p.value === "number" ? `${p.value.toFixed(1)}%` : p.value,
+      subFields: [],
+    },
+    "WK Catches": {
+      keyLabel: t("tournament.fieldingWKCatchesValue") || "WK Catches",
+      getValue: (p) => p.value,
+      subFields: [],
+    },
   };
 
   if (loadingTournaments) {
@@ -606,6 +1079,10 @@ const TournamentAnalysisPage = () => {
                             flexDirection: "column",
                             gap: 10,
                             flex: 1,
+                            maxHeight: 800,
+                            overflowY: tournamentMatches.length > 4 ? "auto" : "visible",
+                            paddingRight: tournamentMatches.length > 4 ? 4 : 0,
+                            scrollbarWidth: "thin",
                           }}
                         >
                           {tournamentMatches.map((match, idx) => {
@@ -615,47 +1092,38 @@ const TournamentAnalysisPage = () => {
                                 .includes(String(teamName || "").trim().toLowerCase());
 
                             return (
-                              <div
-                                key={match.match_id || idx}
-                                style={{
-                                  position: "relative",
-                                  flex: 1,
-                                  minHeight: 86,
-                                  borderRadius: 14,
-                                  padding: "12px 12px 12px 14px",
-                                  background: isOurMatch
-                                    ? isDarkMode
-                                      ? "linear-gradient(180deg, rgba(30,41,59,0.9), rgba(15,23,42,0.88))"
-                                      : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(241,245,249,0.95))"
-                                    : isDarkMode
-                                    ? "rgba(255,255,255,0.03)"
-                                    : "rgba(255,255,255,0.65)",
-                                  border: isOurMatch
-                                    ? `1px solid ${theme.accentColor}`
-                                    : "1px solid rgba(148,163,184,0.18)",
-                                  boxShadow: isOurMatch
-                                    ? `0 0 0 1px ${theme.accentColor}22, 0 8px 18px rgba(0,0,0,0.18)`
-                                    : "none",
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  justifyContent: "center",
-                                }}
-                              >
-                                {isOurMatch && (
-                                  <div
-                                    style={{
-                                      position: "absolute",
-                                      left: 0,
-                                      top: 0,
-                                      bottom: 0,
-                                      width: 4,
-                                      borderTopLeftRadius: 14,
-                                      borderBottomLeftRadius: 14,
-                                      background: theme.accentColor,
-                                      boxShadow: `0 0 10px ${theme.accentColor}66`,
-                                    }}
-                                  />
-                                )}
+                            <div
+                              key={match.match_id || idx}
+                              onClick={() => {
+                                setSelectedResultMatch(match);
+                                setShowScorecardModal(true);
+                              }}
+                              style={{
+                                position: "relative",
+                                flex: 1,
+                                minHeight: 60,
+                                borderRadius: 14,
+                                padding: "12px 12px 12px 14px",
+                                cursor: "pointer",
+                                transition: "transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease",
+                                background: isOurMatch
+                                  ? isDarkMode
+                                    ? "linear-gradient(180deg, rgba(30,41,59,0.9), rgba(15,23,42,0.88))"
+                                    : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(241,245,249,0.95))"
+                                  : isDarkMode
+                                  ? "rgba(255,255,255,0.03)"
+                                  : "rgba(255,255,255,0.65)",
+                                border: isOurMatch
+                                  ? `1px solid ${theme.accentColor}`
+                                  : "1px solid rgba(148,163,184,0.18)",
+                                boxShadow: isOurMatch
+                                  ? `0 0 0 1px ${theme.accentColor}22, 0 8px 18px rgba(0,0,0,0.18)`
+                                  : "0 4px 12px rgba(0,0,0,0.08)",
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                              }}
+                            >
 
                                 <div
                                   style={{
@@ -668,35 +1136,18 @@ const TournamentAnalysisPage = () => {
                                 >
                                   <div
                                     style={{
-                                      fontSize: "0.84rem",
-                                      fontWeight: 700,
+                                      fontSize: "0.72rem",
+                                      fontWeight: 600,
                                       lineHeight: 1.25,
                                     }}
                                   >
                                     {match.team_a} vs {match.team_b}
-                                    {isOurMatch && (
-                                      <span
-                                        style={{
-                                          marginLeft: 8,
-                                          display: "inline-block",
-                                          padding: "2px 7px",
-                                          borderRadius: 999,
-                                          fontSize: "0.62rem",
-                                          fontWeight: 700,
-                                          background: `${theme.accentColor}22`,
-                                          color: theme.accentColor,
-                                          border: `1px solid ${theme.accentColor}44`,
-                                          verticalAlign: "middle",
-                                        }}
-                                      >
-                                        {t("tournament.ourMatchBadge") || "OUR MATCH"}
-                                      </span>
-                                    )}
+
                                   </div>
 
                                   <div
                                     style={{
-                                      fontSize: "0.7rem",
+                                      fontSize: "0.55rem",
                                       opacity: 0.72,
                                       whiteSpace: "nowrap",
                                     }}
@@ -707,7 +1158,7 @@ const TournamentAnalysisPage = () => {
 
                                 <div
                                   style={{
-                                    fontSize: "0.78rem",
+                                    fontSize: "0.55rem",
                                     opacity: 0.92,
                                     lineHeight: 1.35,
                                   }}
@@ -716,6 +1167,16 @@ const TournamentAnalysisPage = () => {
                                     match.result ||
                                     t("tournament.resultTbc") ||
                                     "Result TBC"}
+                                </div>
+                                <div
+                                  style={{
+                                    marginTop: 6,
+                                    fontSize: "0.52rem",
+                                    opacity: 0.58,
+                                    letterSpacing: "0.02em",
+                                  }}
+                                >
+                                  {t("tournament.clickForScorecard") || "Click to view scorecard"}
                                 </div>
                               </div>
                             );
@@ -891,24 +1352,7 @@ const TournamentAnalysisPage = () => {
                                     <div>
                                       <div style={{ fontWeight: 700, lineHeight: 1.15 }}>
                                         {row.team}
-                                        {isOurTeam && (
-                                          <span
-                                            style={{
-                                              marginLeft: 8,
-                                              display: "inline-block",
-                                              padding: "2px 7px",
-                                              borderRadius: 999,
-                                              fontSize: "0.62rem",
-                                              fontWeight: 700,
-                                              background: `${theme.accentColor}22`,
-                                              color: theme.accentColor,
-                                              border: `1px solid ${theme.accentColor}44`,
-                                              verticalAlign: "middle",
-                                            }}
-                                          >
-                                            {t("tournament.ourTeamBadge") || "US"}
-                                          </span>
-                                        )}
+
                                       </div>
                                       <div
                                         style={{
@@ -1122,18 +1566,213 @@ const TournamentAnalysisPage = () => {
               <Card.Body>
                 <div
                   style={{
-                    fontSize: "1rem",
-                    marginBottom: 8,
-                    fontWeight: 700,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: 12,
+                    marginBottom: 12,
+                    flexWrap: "wrap",
                   }}
                 >
-                  {t("tournament.battingTitle") || "Batting leaderboards"}
+                  <div>
+                    <div
+                      style={{
+                        fontSize: "1rem",
+                        marginBottom: 2,
+                        fontWeight: 700,
+                      }}
+                    >
+                      {t("tournament.battingTitle") || "Batting leaderboards"}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "0.78rem",
+                        opacity: 0.72,
+                      }}
+                    >
+                      {showOnlyOurPlayers
+                        ? t("tournament.battingScopeOurPlayers") || "Showing only our players"
+                        : t("tournament.battingScopeAllPlayers") || "Showing all tournament players"}
+                    </div>
+                  </div>
+
+                  <Form.Select
+                    size="sm"
+                    value={selectedBattingStat}
+                    onChange={(e) => setSelectedBattingStat(e.target.value)}
+                    style={{
+                      minWidth: 230,
+                      borderRadius: 999,
+                      fontSize: "0.8rem",
+                      fontWeight: 600,
+                      backgroundColor: isDarkMode
+                        ? "rgba(15,23,42,0.92)"
+                        : "rgba(255,255,255,0.96)",
+                      color: "var(--color-text-primary)",
+                      border: "1px solid rgba(148,163,184,0.35)",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
+                    }}
+                  >
+                    {battingStatOptions.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </Form.Select>
                 </div>
 
-                <div style={{ fontSize: "0.8rem", opacity: 0.75 }}>
-                  {t("tournament.battingPlaceholder") ||
-                    "Batting leaderboard content will expand here."}
-                </div>
+                {loadingBattingLeaders ? (
+                  <div className="d-flex align-items-center gap-2">
+                    <Spinner animation="border" size="sm" />
+                    <span style={{ fontSize: "0.9rem" }}>
+                      {t("tournament.loadingBattingLeaders") || "Loading batting leaderboards…"}
+                    </span>
+                  </div>
+                ) : battingLeadersError ? (
+                  <Alert variant="danger" style={{ fontSize: "0.85rem" }}>
+                    {battingLeadersError}
+                  </Alert>
+                ) : (battingLeaders[selectedBattingStat] || []).length > 0 ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 10,
+                    }}
+                  >
+                    {(battingLeaders[selectedBattingStat] || []).map((player, idx) => {
+                      const statMeta = battingStatMeta[selectedBattingStat];
+                      const normalizedPlayerName = normalizeName(player.name);
+                      const playerCountry = battingPlayerCountryMap[normalizedPlayerName] || "";
+                      const isOurPlayer = playerCountry === teamName || showOnlyOurPlayers;
+                      const shouldHighlightOurPlayer = isOurPlayer;
+                      const playerFlag = getFlagUrlForTeam(playerCountry, 80);
+
+                      return (
+                          <div
+                            key={`${selectedBattingStat}-${player.name}-${idx}`}
+                            style={{
+                              position: "relative",
+                              display: "grid",
+                              gridTemplateColumns: "0.45fr 0.45fr 1.8fr 0.9fr",
+                              columnGap: 12,
+                              alignItems: "center",
+                              padding: "12px 14px",
+                              borderRadius: 14,
+                              border: shouldHighlightOurPlayer
+                                ? `1px solid ${theme.accentColor}`
+                                : "1px solid rgba(148,163,184,0.16)",
+                              background: isDarkMode
+                                ? "linear-gradient(180deg, rgba(15,23,42,0.82), rgba(15,23,42,0.68))"
+                                : "linear-gradient(180deg, rgba(255,255,255,0.9), rgba(248,250,252,0.78))",
+                              boxShadow: shouldHighlightOurPlayer
+                                ? `0 0 0 1px ${theme.accentColor}22, 0 8px 20px rgba(0,0,0,0.14)`
+                                : "0 8px 20px rgba(0,0,0,0.12)",
+                            }}
+                          >
+                          <div
+                            style={{
+                              fontSize: "0.95rem",
+                              fontWeight: 800,
+                              opacity: 0.9,
+                              textAlign: "center",
+                            }}
+                          >
+                            {idx + 1}
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            {playerFlag ? (
+                              <img
+                                src={playerFlag}
+                                alt={playerCountry || (t("home.teamFlagAlt") || "Team flag")}
+                                style={{
+                                  width: 26,
+                                  height: 18,
+                                  borderRadius: 4,
+                                  objectFit: "cover",
+                                  boxShadow: "0 0 8px rgba(0,0,0,0.35)",
+                                }}
+                              />
+                            ) : (
+                              <span style={{ opacity: 0.2 }}>—</span>
+                            )}
+                          </div>
+                          <div>
+                            <div
+                              style={{
+                                fontSize: "0.92rem",
+                                fontWeight: 700,
+                                lineHeight: 1.2,
+                                marginBottom: 4,
+                              }}
+
+                            >
+                              {player.name}
+  
+                            </div>
+
+                            <div
+                              style={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                                gap: 8,
+                                fontSize: "0.72rem",
+                                opacity: 0.76,
+                              }}
+                            >
+                              {statMeta.subFields.map((field) => (
+                                <span
+                                  key={field.label}
+                                  style={{
+                                    padding: "3px 8px",
+                                    borderRadius: 999,
+                                    background: isDarkMode
+                                      ? "rgba(255,255,255,0.04)"
+                                      : "rgba(255,255,255,0.7)",
+                                    border: "1px solid rgba(148,163,184,0.16)",
+                                  }}
+                                >
+                                  <strong>{field.label}:</strong> {field.value(player)}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div style={{ textAlign: "right" }}>
+                            <div
+                              style={{
+                                fontSize: "0.72rem",
+                                opacity: 0.7,
+                                marginBottom: 2,
+                              }}
+                            >
+                              {statMeta.keyLabel}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: "1.05rem",
+                                fontWeight: 800,
+                                color: theme.accentColor,
+                              }}
+                            >
+                              {statMeta.getValue(player)}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <Alert variant="secondary" style={{ fontSize: "0.85rem" }}>
+                    {t("tournament.noBattingLeaders") || "No batting leaderboard data available."}
+                  </Alert>
+                )}
               </Card.Body>
             </Card>
           )}
@@ -1143,18 +1782,162 @@ const TournamentAnalysisPage = () => {
               <Card.Body>
                 <div
                   style={{
-                    fontSize: "1rem",
-                    marginBottom: 8,
-                    fontWeight: 700,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: 12,
+                    marginBottom: 12,
+                    flexWrap: "wrap",
                   }}
                 >
-                  {t("tournament.bowlingTitle") || "Bowling leaderboards"}
+                  <div>
+                    <div style={{ fontSize: "1rem", marginBottom: 2, fontWeight: 700 }}>
+                      {t("tournament.bowlingTitle") || "Bowling leaderboards"}
+                    </div>
+                    <div style={{ fontSize: "0.78rem", opacity: 0.72 }}>
+                      {showOnlyOurPlayers
+                        ? t("tournament.bowlingScopeOurPlayers") || "Showing only our players"
+                        : t("tournament.bowlingScopeAllPlayers") || "Showing all tournament players"}
+                    </div>
+                  </div>
+
+                  <Form.Select
+                    size="sm"
+                    value={selectedBowlingStat}
+                    onChange={(e) => setSelectedBowlingStat(e.target.value)}
+                    style={{
+                      minWidth: 230,
+                      borderRadius: 999,
+                      fontSize: "0.8rem",
+                      fontWeight: 600,
+                      backgroundColor: isDarkMode
+                        ? "rgba(15,23,42,0.92)"
+                        : "rgba(255,255,255,0.96)",
+                      color: "var(--color-text-primary)",
+                      border: "1px solid rgba(148,163,184,0.35)",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
+                    }}
+                  >
+                    {bowlingStatOptions.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </Form.Select>
                 </div>
 
-                <div style={{ fontSize: "0.8rem", opacity: 0.75 }}>
-                  {t("tournament.bowlingPlaceholder") ||
-                    "Bowling leaderboard content will expand here."}
-                </div>
+                {loadingBowlingLeaders ? (
+                  <div className="d-flex align-items-center gap-2">
+                    <Spinner animation="border" size="sm" />
+                    <span style={{ fontSize: "0.9rem" }}>
+                      {t("tournament.loadingBowlingLeaders") || "Loading bowling leaderboards…"}
+                    </span>
+                  </div>
+                ) : bowlingLeadersError ? (
+                  <Alert variant="danger" style={{ fontSize: "0.85rem" }}>
+                    {bowlingLeadersError}
+                  </Alert>
+                ) : (bowlingLeaders[selectedBowlingStat] || []).length > 0 ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    {(bowlingLeaders[selectedBowlingStat] || []).map((player, idx) => {
+                      const statMeta = bowlingStatMeta[selectedBowlingStat];
+                      const normalizedPlayerName = normalizeName(player.name);
+                      const playerCountry = bowlingPlayerCountryMap[normalizedPlayerName] || "";
+                      const isOurPlayer = playerCountry === teamName || showOnlyOurPlayers;
+                      const shouldHighlightOurPlayer = isOurPlayer;
+                      const playerFlag = getFlagUrlForTeam(playerCountry, 80);
+
+                      return (
+                        <div
+                          key={`${selectedBowlingStat}-${player.name}-${idx}`}
+                          style={{
+                            position: "relative",
+                            display: "grid",
+                            gridTemplateColumns: "0.45fr 0.45fr 1.8fr 0.9fr",
+                            columnGap: 12,
+                            alignItems: "center",
+                            padding: "12px 14px",
+                            borderRadius: 14,
+                            border: shouldHighlightOurPlayer
+                              ? `1px solid ${theme.accentColor}`
+                              : "1px solid rgba(148,163,184,0.16)",
+                            background: isDarkMode
+                              ? "linear-gradient(180deg, rgba(15,23,42,0.82), rgba(15,23,42,0.68))"
+                              : "linear-gradient(180deg, rgba(255,255,255,0.9), rgba(248,250,252,0.78))",
+                            boxShadow: shouldHighlightOurPlayer
+                              ? `0 0 0 1px ${theme.accentColor}22, 0 8px 20px rgba(0,0,0,0.14)`
+                              : "0 8px 20px rgba(0,0,0,0.12)",
+                          }}
+                        >
+                          <div style={{ fontSize: "0.95rem", fontWeight: 800, opacity: 0.9, textAlign: "center" }}>
+                            {idx + 1}
+                          </div>
+
+                          <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                            {playerFlag ? (
+                              <img
+                                src={playerFlag}
+                                alt={playerCountry || (t("home.teamFlagAlt") || "Team flag")}
+                                style={{
+                                  width: 26,
+                                  height: 18,
+                                  borderRadius: 4,
+                                  objectFit: "cover",
+                                  boxShadow: "0 0 8px rgba(0,0,0,0.35)",
+                                }}
+                              />
+                            ) : (
+                              <span style={{ opacity: 0.2 }}>—</span>
+                            )}
+                          </div>
+
+                          <div>
+                            <div style={{ fontSize: "0.92rem", fontWeight: 700, lineHeight: 1.2, marginBottom: 4 }}>
+                              {player.name}
+                            </div>
+
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, fontSize: "0.72rem", opacity: 0.76 }}>
+                              {statMeta.subFields.map((field) => (
+                                <span
+                                  key={field.label}
+                                  style={{
+                                    padding: "3px 8px",
+                                    borderRadius: 999,
+                                    background: isDarkMode
+                                      ? "rgba(255,255,255,0.04)"
+                                      : "rgba(255,255,255,0.7)",
+                                    border: "1px solid rgba(148,163,184,0.16)",
+                                  }}
+                                >
+                                  <strong>{field.label}:</strong> {field.value(player)}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div style={{ textAlign: "right" }}>
+                            <div style={{ fontSize: "0.72rem", opacity: 0.7, marginBottom: 2 }}>
+                              {statMeta.keyLabel}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: "1.05rem",
+                                fontWeight: 800,
+                                color: theme.accentColor,
+                              }}
+                            >
+                              {statMeta.getValue(player)}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <Alert variant="secondary" style={{ fontSize: "0.85rem" }}>
+                    {t("tournament.noBowlingLeaders") || "No bowling leaderboard data available."}
+                  </Alert>
+                )}
               </Card.Body>
             </Card>
           )}
@@ -1164,24 +1947,214 @@ const TournamentAnalysisPage = () => {
               <Card.Body>
                 <div
                   style={{
-                    fontSize: "1rem",
-                    marginBottom: 8,
-                    fontWeight: 700,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: 12,
+                    marginBottom: 12,
+                    flexWrap: "wrap",
                   }}
                 >
-                  {t("tournament.fieldingTitle") || "Fielding leaderboards"}
+                  <div>
+                    <div style={{ fontSize: "1rem", marginBottom: 2, fontWeight: 700 }}>
+                      {t("tournament.fieldingTitle") || "Fielding leaderboards"}
+                    </div>
+                    <div style={{ fontSize: "0.78rem", opacity: 0.72 }}>
+                      {showOnlyOurPlayers
+                        ? t("tournament.fieldingScopeOurPlayers") || "Showing only our players"
+                        : t("tournament.fieldingScopeAllPlayers") || "Showing all tournament players"}
+                    </div>
+                  </div>
+
+                  <Form.Select
+                    size="sm"
+                    value={selectedFieldingStat}
+                    onChange={(e) => setSelectedFieldingStat(e.target.value)}
+                    style={{
+                      minWidth: 230,
+                      borderRadius: 999,
+                      fontSize: "0.8rem",
+                      fontWeight: 600,
+                      backgroundColor: isDarkMode
+                        ? "rgba(15,23,42,0.92)"
+                        : "rgba(255,255,255,0.96)",
+                      color: "var(--color-text-primary)",
+                      border: "1px solid rgba(148,163,184,0.35)",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
+                    }}
+                  >
+                    {fieldingStatOptions.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </Form.Select>
                 </div>
 
-                <div style={{ fontSize: "0.8rem", opacity: 0.75 }}>
-                  {t("tournament.fieldingPlaceholder") ||
-                    "Fielding leaderboard content will expand here."}
-                </div>
+                {loadingFieldingLeaders ? (
+                  <div className="d-flex align-items-center gap-2">
+                    <Spinner animation="border" size="sm" />
+                    <span style={{ fontSize: "0.9rem" }}>
+                      {t("tournament.loadingFieldingLeaders") || "Loading fielding leaderboards…"}
+                    </span>
+                  </div>
+                ) : fieldingLeadersError ? (
+                  <Alert variant="danger" style={{ fontSize: "0.85rem" }}>
+                    {fieldingLeadersError}
+                  </Alert>
+                ) : (fieldingLeaders[selectedFieldingStat] || []).length > 0 ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    {(fieldingLeaders[selectedFieldingStat] || []).map((player, idx) => {
+                      const statMeta = fieldingStatMeta[selectedFieldingStat];
+                      const normalizedPlayerName = normalizeName(player.name);
+                      const playerCountry = fieldingPlayerCountryMap[normalizedPlayerName] || "";
+                      const isOurPlayer = playerCountry === teamName || showOnlyOurPlayers;
+                      const shouldHighlightOurPlayer = isOurPlayer;
+                      const playerFlag = getFlagUrlForTeam(playerCountry, 80);
+
+                      return (
+                        <div
+                          key={`${selectedFieldingStat}-${player.name}-${idx}`}
+                          style={{
+                            position: "relative",
+                            display: "grid",
+                            gridTemplateColumns: "0.45fr 0.45fr 1.8fr 0.9fr",
+                            columnGap: 12,
+                            alignItems: "center",
+                            padding: "12px 14px",
+                            borderRadius: 14,
+                            border: shouldHighlightOurPlayer
+                              ? `1px solid ${theme.accentColor}`
+                              : "1px solid rgba(148,163,184,0.16)",
+                            background: isDarkMode
+                              ? "linear-gradient(180deg, rgba(15,23,42,0.82), rgba(15,23,42,0.68))"
+                              : "linear-gradient(180deg, rgba(255,255,255,0.9), rgba(248,250,252,0.78))",
+                            boxShadow: shouldHighlightOurPlayer
+                              ? `0 0 0 1px ${theme.accentColor}22, 0 8px 20px rgba(0,0,0,0.14)`
+                              : "0 8px 20px rgba(0,0,0,0.12)",
+                          }}
+                        >
+                          <div style={{ fontSize: "0.95rem", fontWeight: 800, opacity: 0.9, textAlign: "center" }}>
+                            {idx + 1}
+                          </div>
+
+                          <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                            {playerFlag ? (
+                              <img
+                                src={playerFlag}
+                                alt={playerCountry || (t("home.teamFlagAlt") || "Team flag")}
+                                style={{
+                                  width: 26,
+                                  height: 18,
+                                  borderRadius: 4,
+                                  objectFit: "cover",
+                                  boxShadow: "0 0 8px rgba(0,0,0,0.35)",
+                                }}
+                              />
+                            ) : (
+                              <span style={{ opacity: 0.2 }}>—</span>
+                            )}
+                          </div>
+
+                          <div>
+                            <div style={{ fontSize: "0.92rem", fontWeight: 700, lineHeight: 1.2, marginBottom: 4 }}>
+                              {player.name}
+                            </div>
+                          </div>
+
+                          <div style={{ textAlign: "right" }}>
+                            <div style={{ fontSize: "0.72rem", opacity: 0.7, marginBottom: 2 }}>
+                              {statMeta.keyLabel}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: "1.05rem",
+                                fontWeight: 800,
+                                color: theme.accentColor,
+                              }}
+                            >
+                              {statMeta.getValue(player)}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <Alert variant="secondary" style={{ fontSize: "0.85rem" }}>
+                    {t("tournament.noFieldingLeaders") || "No fielding leaderboard data available."}
+                  </Alert>
+                )}
               </Card.Body>
             </Card>
           )}
         </>
+        
       )}
+      <Modal
+        show={showScorecardModal}
+        onHide={() => {
+          setShowScorecardModal(false);
+          setSelectedResultMatch(null);
+        }}
+        fullscreen
+        centered
+        contentClassName="themed-modal-content"
+      >
+      <Modal.Header className="scorecard-modal-header-gradient">
+        <Modal.Title style={{ fontSize: "0.95rem" }}>
+          {selectedResultMatch
+            ? `${selectedResultMatch.team_a} vs ${selectedResultMatch.team_b}`
+            : t("tournament.scorecardTitle") || "Match scorecard"}
+        </Modal.Title>
+      </Modal.Header>
+
+        <Modal.Body
+          style={{
+            backgroundColor: isDarkMode ? "#020617" : "#f8fafc",
+            color: isDarkMode ? "#e5e7eb" : "#0f172a",
+            maxHeight: "80vh",
+            overflowY: "auto",
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => {
+              setShowScorecardModal(false);
+              setSelectedResultMatch(null);
+            }}
+            aria-label={t("common.close") || "Close"}
+            style={{
+              position: "sticky",
+              top: 0,
+              zIndex: 20,
+              marginLeft: "auto",
+              display: "block",
+              width: 40,
+              height: 40,
+              borderRadius: 999,
+              border: "1px solid rgba(148,163,184,0.35)",
+              background: isDarkMode ? "rgba(15,23,42,0.92)" : "rgba(255,255,255,0.96)",
+              color: isDarkMode ? "#e5e7eb" : "#0f172a",
+              fontSize: "1.35rem",
+              lineHeight: 1,
+              cursor: "pointer",
+              boxShadow: "0 6px 16px rgba(0,0,0,0.18)",
+              marginBottom: 8,
+            }}
+          >
+            ×
+          </button>
+          {selectedResultMatch && (
+            <MatchScorecardPage
+              selectedMatch={selectedResultMatch}
+              teamCategory={teamCategory}
+            />
+          )}
+        </Modal.Body>
+      </Modal>
     </>
+    
   );
 };
 

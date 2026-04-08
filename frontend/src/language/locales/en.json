@@ -873,7 +873,55 @@
 
     "stageShort": "Next stage",
     "ourTeamBadge": "US",
-    "ourMatchBadge": "OUR MATCH"
+    "ourMatchBadge": "OUR MATCH",
+
+    "loadingBattingLeaders": "Loading batting leaderboards…",
+    "noBattingLeaders": "No batting leaderboard data available.",
+    "battingScopeOurPlayers": "Showing only our players",
+    "battingScopeAllPlayers": "Showing all tournament players",
+    "matchesShort": "Mat",
+    "inningsShort": "Inns",
+    "ballsShort": "Balls",
+    "battingMostRunsValue": "Runs",
+    "battingHighScoreValue": "High Score",
+    "battingAverageValue": "Average",
+    "battingStrikeRateValue": "SR",
+    "battingFiftiesValue": "50+",
+    "battingDucksValue": "Ducks",
+    "battingFoursValue": "Fours",
+    "battingSixesValue": "Sixes",
+    "battingIntentValue": "Intent",
+    "battingScoringShotValue": "Scoring %",
+    "clickForScorecard": "Click to view scorecard",
+    "scorecardTitle": "Match scorecard",
+    "loadingBowlingLeaders": "Loading bowling leaderboards…",
+    "loadingFieldingLeaders": "Loading fielding leaderboards…",
+    "noBowlingLeaders": "No bowling leaderboard data available.",
+    "noFieldingLeaders": "No fielding leaderboard data available.",
+    "bowlingScopeOurPlayers": "Showing only our players",
+    "bowlingScopeAllPlayers": "Showing all tournament players",
+    "fieldingScopeOurPlayers": "Showing only our players",
+    "fieldingScopeAllPlayers": "Showing all tournament players",
+
+    "bowlingMostWicketsValue": "Wickets",
+    "bowlingBestFiguresValue": "Figures",
+    "bowlingAverageValue": "Average",
+    "bowlingEconomyValue": "Econ",
+    "bowlingStrikeRateValue": "SR",
+    "bowlingThreePlusValue": "3+ Hauls",
+    "bowlingDotBallsValue": "Dots",
+    "bowlingWidesValue": "Wides",
+    "bowlingNoBallsValue": "No Balls",
+
+    "fieldingCatchesValue": "Catches",
+    "fieldingRunOutsValue": "Run Outs",
+    "fieldingDismissalsValue": "Dismissals",
+    "fieldingConversionValue": "Conversion %",
+    "fieldingCleanHandsValue": "Clean Hands %",
+    "fieldingWKCatchesValue": "WK Catches",
+
+    "opponentShort": "Opp",
+    "wicketsShort": "Wkts"
 
   }
 }
