@@ -545,6 +545,19 @@ class KPIConfigUpdate(BaseModel):
     team_category: str
     items: List[KPIItemUpdate]
 
+class TournamentStructureResponse(BaseModel):
+    tournament: Dict[str, Any]
+    stages: List[Dict[str, Any]]
+    progressions: List[Dict[str, Any]]
+    current_stage: Optional[Dict[str, Any]] = None
+    available_stage_options: List[Dict[str, Any]]
+    has_progression: bool
+    is_multi_stage: bool
+
+class TournamentStageStandingsPayload(BaseModel):
+    tournament_id: int
+    stage_id: int
+
 
 fixtures_router = APIRouter(prefix="/fixtures", tags=["fixtures"])
 
@@ -1757,7 +1770,27 @@ def _ensure_kpi_definitions_seeded(conn: sqlite3.Connection) -> None:
         conn.rollback()
         raise
 
+def _derive_stage_statuses(stages: List[Dict[str, Any]], progressions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Adds a few frontend-friendly derived fields to stage rows.
+    Keeps your DB values intact, but makes the frontend much easier to wire.
+    """
+    progressions_by_source = defaultdict(list)
+    for row in progressions:
+        progressions_by_source[row["source_stage_id"]].append(row)
 
+    enriched = []
+    for stage in stages:
+        outgoing = progressions_by_source.get(stage["stage_id"], [])
+
+        enriched.append({
+            **stage,
+            "has_progression": len(outgoing) > 0,
+            "is_selectable": stage["status"] in ("current", "completed"),
+            "is_knockout_like": stage["stage_type"] in ("knockout", "classification"),
+        })
+
+    return enriched
 
 # ---------- Core compute: Scoring Shot % (Batting • Powerplay) ----------
 def _compute_bat_pp_scoring_shot_pct(
@@ -3541,16 +3574,19 @@ def get_matches(teamCategory: Optional[str] = None):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
-    # include m.team_a and m.team_b as IDs alongside the country names
     base_query = """
         SELECT 
             m.match_id,
             t.tournament_name,
-            m.team_a      AS team_a_id,
+            m.team_a AS team_a_id,
             c1.country_name AS team_a,
-            m.team_b      AS team_b_id,
+            m.team_b AS team_b_id,
             c2.country_name AS team_b,
-            m.match_date
+            m.match_date,
+            m.venue,
+            m.result,
+            m.winner_id,
+            m.stage_id
         FROM matches m
         JOIN countries c1 ON m.team_a = c1.country_id
         JOIN countries c2 ON m.team_b = c2.country_id
@@ -3571,23 +3607,25 @@ def get_matches(teamCategory: Optional[str] = None):
             """
             params = [f"%{teamCategory}", "%training%", f"%{teamCategory}", "%training%"]
 
-    # add ORDER BY
-    query = base_query + " ORDER BY m.match_date DESC"
+    query = base_query + " ORDER BY m.match_date DESC, m.match_id DESC"
     cursor.execute(query, params)
     rows = cursor.fetchall()
     conn.close()
 
-    # map to JSON-friendly dicts, including the two new ID fields
     matches = []
     for row in rows:
         matches.append({
-            "match_id":   row[0],
+            "match_id": row[0],
             "tournament": row[1],
-            "team_a_id":  row[2],
-            "team_a":     row[3],
-            "team_b_id":  row[4],
-            "team_b":     row[5],
+            "team_a_id": row[2],
+            "team_a": row[3],
+            "team_b_id": row[4],
+            "team_b": row[5],
             "match_date": row[6],
+            "venue": row[7],
+            "result": row[8],
+            "winner_id": row[9],
+            "stage_id": row[10],
         })
 
     return matches
@@ -15518,6 +15556,376 @@ def post_tournament_team_summary(payload: TeamTournamentSummaryRequest):
         )
     finally:
         conn.close()
+
+@app.get("/tournament-structure", response_model=TournamentStructureResponse)
+def get_tournament_structure(
+    tournament_id: Optional[int] = Query(None),
+    tournament_name: Optional[str] = Query(None),
+):
+    """
+    Returns tournament metadata, stage definitions, and stage progression rules.
+
+    You can call it with either:
+      - tournament_id
+      - tournament_name
+
+    Example:
+      /tournament-structure?tournament_id=11
+      /tournament-structure?tournament_name=2026%20Kalahari%20T20%20Invitational%20Women's
+    """
+    if not tournament_id and not tournament_name:
+        raise HTTPException(
+            status_code=400,
+            detail="Provide either tournament_id or tournament_name."
+        )
+
+    conn = _db()
+    try:
+        # 1) Resolve tournament
+        if tournament_id is not None:
+            tournament_row = conn.execute(
+                """
+                SELECT
+                    tournament_id,
+                    tournament_name,
+                    display_name,
+                    team_category,
+                    season_year,
+                    start_date,
+                    end_date,
+                    status,
+                    format,
+                    overs_per_innings,
+                    balls_per_over,
+                    teams_count,
+                    points_per_win,
+                    points_per_tie,
+                    points_per_no_result,
+                    default_carry_over_mode,
+                    final_positions_count,
+                    is_active
+                FROM tournaments
+                WHERE tournament_id = ?
+                """,
+                (tournament_id,),
+            ).fetchone()
+        else:
+            tournament_row = conn.execute(
+                """
+                SELECT
+                    tournament_id,
+                    tournament_name,
+                    display_name,
+                    team_category,
+                    season_year,
+                    start_date,
+                    end_date,
+                    status,
+                    format,
+                    overs_per_innings,
+                    balls_per_over,
+                    teams_count,
+                    points_per_win,
+                    points_per_tie,
+                    points_per_no_result,
+                    default_carry_over_mode,
+                    final_positions_count,
+                    is_active
+                FROM tournaments
+                WHERE tournament_name = ?
+                """,
+                (tournament_name,),
+            ).fetchone()
+
+        if not tournament_row:
+            raise HTTPException(status_code=404, detail="Tournament not found.")
+
+        resolved_tournament_id = tournament_row["tournament_id"]
+
+        # 2) Load stages
+        stage_rows = conn.execute(
+            """
+            SELECT
+                stage_id,
+                tournament_id,
+                stage_name,
+                display_order,
+                stage_type,
+                status,
+                teams_count,
+                matches_per_team,
+                advancement_line,
+                carry_over_mode,
+                progression_mode,
+                points_reset,
+                is_active
+            FROM tournament_stages
+            WHERE tournament_id = ?
+              AND is_active = 1
+            ORDER BY display_order ASC, stage_id ASC
+            """,
+            (resolved_tournament_id,),
+        ).fetchall()
+
+        stages = [dict(r) for r in stage_rows]
+
+        # 3) Load progression rules
+        progression_rows = conn.execute(
+            """
+            SELECT
+                p.progression_id,
+                p.tournament_id,
+                p.source_stage_id,
+                src.stage_name AS source_stage_name,
+                p.destination_stage_id,
+                dst.stage_name AS destination_stage_name,
+                p.rank_from,
+                p.rank_to,
+                p.destination_seed_from,
+                p.notes,
+                p.is_active
+            FROM tournament_stage_progressions p
+            JOIN tournament_stages src
+              ON src.stage_id = p.source_stage_id
+            JOIN tournament_stages dst
+              ON dst.stage_id = p.destination_stage_id
+            WHERE p.tournament_id = ?
+              AND p.is_active = 1
+            ORDER BY src.display_order ASC, p.rank_from ASC, dst.display_order ASC
+            """,
+            (resolved_tournament_id,),
+        ).fetchall()
+
+        progressions = [dict(r) for r in progression_rows]
+
+        # 4) Add some frontend-friendly derived fields
+        enriched_stages = _derive_stage_statuses(stages, progressions)
+
+        current_stage = next(
+            (s for s in enriched_stages if s["status"] == "current"),
+            None
+        )
+
+        available_stage_options = [
+            {
+                "id": s["stage_id"],
+                "stage_id": s["stage_id"],
+                "name": s["stage_name"],
+                "status": s["status"],
+                "display_order": s["display_order"],
+                "stage_type": s["stage_type"],
+                "advancement_line": s["advancement_line"],
+                "carry_over_mode": s["carry_over_mode"],
+                "progression_mode": s["progression_mode"],
+                "points_reset": s["points_reset"],
+            }
+            for s in enriched_stages
+            if s["is_selectable"]
+        ]
+
+        return {
+            "tournament": dict(tournament_row),
+            "stages": enriched_stages,
+            "progressions": progressions,
+            "current_stage": current_stage,
+            "available_stage_options": available_stage_options,
+            "has_progression": len(progressions) > 0,
+            "is_multi_stage": len(enriched_stages) > 1,
+        }
+    finally:
+        conn.close()
+
+@app.post("/tournament-stage-standings")
+def get_tournament_stage_standings(payload: TournamentStageStandingsPayload):
+    import sqlite3
+
+    tournament_id = payload.tournament_id
+    stage_id = payload.stage_id
+
+    conn = sqlite3.connect("cricket_analysis.db")
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+
+    # Confirm the stage belongs to the tournament
+    stage_row = cur.execute(
+        """
+        SELECT
+            stage_id,
+            tournament_id,
+            stage_name,
+            stage_type,
+            status,
+            matches_per_team,
+            advancement_line,
+            carry_over_mode,
+            progression_mode,
+            points_reset
+        FROM tournament_stages
+        WHERE tournament_id = ?
+          AND stage_id = ?
+          AND is_active = 1
+        """,
+        (tournament_id, stage_id),
+    ).fetchone()
+
+    if not stage_row:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Stage not found for this tournament.")
+
+    # Query innings only for matches in the selected stage
+    cur.execute(
+        """
+        SELECT 
+            i.innings_id,
+            i.batting_team,
+            i.bowling_team,
+            i.overs_bowled,
+            i.wickets,
+            i.total_runs,
+            i.innings,
+            m.match_id,
+            m.result,
+            m.winner_id,
+            cw.country_name AS winner_name,
+            m.adjusted_overs
+        FROM innings i
+        JOIN matches m ON i.match_id = m.match_id
+        LEFT JOIN countries cw ON m.winner_id = cw.country_id
+        WHERE m.tournament_id = ?
+          AND m.stage_id = ?
+        """,
+        (tournament_id, stage_id),
+    )
+
+    innings_data = cur.fetchall()
+
+    if not innings_data:
+        conn.close()
+        return {
+            "tournament_id": tournament_id,
+            "stage": dict(stage_row),
+            "standings": [],
+        }
+
+    team_stats = {}
+    processed_matches = set()
+
+    for row in innings_data:
+        team = row["batting_team"]
+        opp = row["bowling_team"]
+        match_id = row["match_id"]
+        runs = row["total_runs"] or 0
+        wickets = row["wickets"] or 0
+        innings_no = row["innings"]
+        overs_bowled = row["overs_bowled"] or 0.0
+        result = row["result"]
+        winner_name = row["winner_name"]
+        adjusted_overs = row["adjusted_overs"] or 20.0
+
+        # NRR-safe overs faced logic
+        is_chasing = innings_no == 2
+        lost_while_chasing = is_chasing and winner_name and winner_name != team
+        was_all_out = wickets >= 10
+
+        if innings_no == 1 and overs_bowled > adjusted_overs:
+            overs_faced = overs_bowled
+        elif was_all_out or lost_while_chasing:
+            overs_faced = adjusted_overs
+        else:
+            overs_faced = overs_bowled
+
+        if team not in team_stats:
+            team_stats[team] = {
+                "played": 0,
+                "wins": 0,
+                "losses": 0,
+                "no_results": 0,
+                "points": 0,
+                "runs_scored": 0,
+                "overs_faced": 0.0,
+                "runs_conceded": 0,
+                "overs_bowled": 0.0,
+            }
+
+        if opp not in team_stats:
+            team_stats[opp] = {
+                "played": 0,
+                "wins": 0,
+                "losses": 0,
+                "no_results": 0,
+                "points": 0,
+                "runs_scored": 0,
+                "overs_faced": 0.0,
+                "runs_conceded": 0,
+                "overs_bowled": 0.0,
+            }
+
+        # Batting contribution
+        team_stats[team]["runs_scored"] += runs
+        team_stats[team]["overs_faced"] += overs_faced
+
+        # Bowling conceded contribution
+        team_stats[opp]["runs_conceded"] += runs
+        team_stats[opp]["overs_bowled"] += overs_faced
+
+        # Only count played / result once per team per match
+        if (match_id, team) not in processed_matches:
+            team_stats[team]["played"] += 1
+            processed_matches.add((match_id, team))
+
+            if result:
+                lower_result = str(result).lower()
+
+                # Treat abandoned / no result
+                if "no result" in lower_result or "abandoned" in lower_result:
+                    team_stats[team]["no_results"] += 1
+                    team_stats[team]["points"] += 1
+                elif winner_name:
+                    if winner_name == team:
+                        team_stats[team]["wins"] += 1
+                        team_stats[team]["points"] += 2
+                    else:
+                        team_stats[team]["losses"] += 1
+
+    standings = []
+
+    for team_name, stats in team_stats.items():
+        overs_faced = stats["overs_faced"] or 0.0
+        overs_bowled = stats["overs_bowled"] or 0.0
+
+        run_rate_for = (stats["runs_scored"] / overs_faced) if overs_faced > 0 else 0.0
+        run_rate_against = (stats["runs_conceded"] / overs_bowled) if overs_bowled > 0 else 0.0
+        nrr = run_rate_for - run_rate_against
+
+        standings.append({
+            "team": team_name,
+            "played": stats["played"],
+            "wins": stats["wins"],
+            "losses": stats["losses"],
+            "no_results": stats["no_results"],
+            "points": stats["points"],
+            "runs_scored": stats["runs_scored"],
+            "overs_faced": round(stats["overs_faced"], 3),
+            "runs_conceded": stats["runs_conceded"],
+            "overs_bowled": round(stats["overs_bowled"], 3),
+            "nrr": round(nrr, 3),
+        })
+
+    # Sort by points desc, then NRR desc, then team asc
+    standings.sort(
+        key=lambda x: (-x["points"], -x["nrr"], x["team"])
+    )
+
+    conn.close()
+
+    return {
+        "tournament_id": tournament_id,
+        "stage": dict(stage_row),
+        "standings": standings,
+    }
+
+
+
 
 
 app.include_router(fixtures_router)

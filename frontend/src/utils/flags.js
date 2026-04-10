@@ -85,6 +85,10 @@ export const TEAM_FLAG_CODES = {
   "cayman islands men": "ky",
   "cayman islands women": "ky",
 
+  "costa rica": "cr",
+  "costa rica men": "cr",
+  "costa rica women": "cr",
+
   "mexico": "mx",
   "mexico men": "mx",
   "mexico women": "mx",

@@ -23,23 +23,30 @@ const TournamentAnalysisPage = () => {
 
   const [tournaments, setTournaments] = useState([]);
   const [selectedTournament, setSelectedTournament] = useState("");
-  const [selectedStageId, setSelectedStageId] = useState("group");
+  const [selectedTournamentId, setSelectedTournamentId] = useState(null);
+  const [selectedStageId, setSelectedStageId] = useState(null);
   const [activeDetail, setActiveDetail] = useState(null);
 
   const [loadingTournaments, setLoadingTournaments] = useState(false);
   const [loadingPage, setLoadingPage] = useState(false);
+  const [loadingStageTable, setLoadingStageTable] = useState(false);
   const [error, setError] = useState("");
 
   const [showOnlyOurPlayers, setShowOnlyOurPlayers] = useState(true);
 
   const [tournamentMatches, setTournamentMatches] = useState([]);
   const [tournamentTable, setTournamentTable] = useState([]);
+  const [tournamentStructure, setTournamentStructure] = useState(null);
+  const [stageOptions, setStageOptions] = useState([]);
+  const [currentStage, setCurrentStage] = useState(null);
+  const [selectedStageMeta, setSelectedStageMeta] = useState(null);
+  const [derivedStageTable, setDerivedStageTable] = useState([]);
+  const [podiumStandings, setPodiumStandings] = useState([]);
 
   const [battingLeaders, setBattingLeaders] = useState({});
   const [loadingBattingLeaders, setLoadingBattingLeaders] = useState(false);
   const [battingLeadersError, setBattingLeadersError] = useState("");
   const [selectedBattingStat, setSelectedBattingStat] = useState("Most Runs");
-  const [ourBattingPlayerNames, setOurBattingPlayerNames] = useState(new Set());
   const [battingPlayerCountryMap, setBattingPlayerCountryMap] = useState({});
 
   const [bowlingLeaders, setBowlingLeaders] = useState({});
@@ -65,6 +72,33 @@ const TournamentAnalysisPage = () => {
     borderRadius: 12,
   };
 
+  const safeDateValue = (match) => {
+    const raw =
+      match?.match_date ||
+      match?.date ||
+      match?.scheduled_date ||
+      "";
+    const ts = new Date(raw).getTime();
+    return Number.isFinite(ts) ? ts : 0;
+  };
+
+  const hasMatchResult = (match) =>
+    !!String(match?.resolvedResult || match?.result || "").trim();
+
+  const sortedTournamentMatches = useMemo(() => {
+    return [...tournamentMatches].sort(
+      (a, b) => safeDateValue(a) - safeDateValue(b)
+    );
+  }, [tournamentMatches]);
+
+  const completedMatches = useMemo(() => {
+    return sortedTournamentMatches.filter((match) => hasMatchResult(match));
+  }, [sortedTournamentMatches]);
+
+  const upcomingMatches = useMemo(() => {
+    return sortedTournamentMatches.filter((match) => !hasMatchResult(match));
+  }, [sortedTournamentMatches]);
+
   useEffect(() => {
     const fetchTournaments = async () => {
       try {
@@ -75,7 +109,23 @@ const TournamentAnalysisPage = () => {
           params: { team_category: teamCategory },
         });
 
-        setTournaments(res.data || []);
+        const rawTournaments = Array.isArray(res.data) ? res.data : [];
+
+        const filteredTournaments = rawTournaments.filter((name) => {
+          const normalized = String(name || "").toLowerCase();
+
+          if (teamCategory === "Women") {
+            return normalized.includes("women") || normalized.includes("women's");
+          }
+
+          if (teamCategory === "Men") {
+            return !normalized.includes("women") && !normalized.includes("women's");
+          }
+
+          return true;
+        });
+
+        setTournaments(filteredTournaments);
       } catch (err) {
         console.error("Error loading tournaments", err);
         setError(
@@ -360,6 +410,12 @@ const TournamentAnalysisPage = () => {
       setLoadingPage(false);
       setTournamentMatches([]);
       setTournamentTable([]);
+      setTournamentStructure(null);
+      setStageOptions([]);
+      setCurrentStage(null);
+      setSelectedStageMeta(null);
+      setSelectedTournamentId(null);
+      setSelectedStageId(null);
       return;
     }
 
@@ -368,16 +424,38 @@ const TournamentAnalysisPage = () => {
         setLoadingPage(true);
         setError("");
 
+        // 1) Load DB-driven tournament structure
+        const structureRes = await api.get("/tournament-structure", {
+          params: {
+            tournament_name: selectedTournament,
+          },
+        });
+
+        const structure = structureRes.data || null;
+
+        setTournamentStructure(structure);
+        setSelectedTournamentId(structure?.tournament?.tournament_id || null);
+        setStageOptions(structure?.available_stage_options || []);
+        setCurrentStage(structure?.current_stage || null);
+
+        const defaultStageId =
+          structure?.current_stage?.stage_id ||
+          structure?.available_stage_options?.[0]?.stage_id ||
+          null;
+
+        setSelectedStageId(defaultStageId);
+
+        // 2) Load matches
         const matchesRes = await api.get("/matches", {
           params: { teamCategory },
         });
 
-        const allMatches = matchesRes.data || [];
+        const allMatches = Array.isArray(matchesRes.data) ? matchesRes.data : [];
         const filteredMatches = allMatches.filter(
           (m) => m.tournament === selectedTournament
         );
 
-        // Pull scorecard results for each match
+        // 3) Pull scorecard results for each match
         const enrichedMatches = await Promise.all(
           filteredMatches.map(async (match) => {
             try {
@@ -389,7 +467,8 @@ const TournamentAnalysisPage = () => {
 
               return {
                 ...match,
-                resolvedResult: scorecardRes.data?.result || match.result || "",
+                resolvedResult:
+                  scorecardRes.data?.result || match.result || "",
               };
             } catch (err) {
               console.error(
@@ -406,13 +485,6 @@ const TournamentAnalysisPage = () => {
         );
 
         setTournamentMatches(enrichedMatches);
-
-        const standingsRes = await api.post("/tournament-standings", {
-          team_category: teamCategory,
-          tournament: selectedTournament,
-        });
-
-        setTournamentTable(standingsRes.data || []);
       } catch (err) {
         console.error("Error preparing tournament page", err);
         setError(
@@ -428,110 +500,281 @@ const TournamentAnalysisPage = () => {
     bootstrapTournamentPage();
   }, [selectedTournament, teamCategory]);
 
-  const tournamentStageOptions = useMemo(() => {
-    if (!selectedTournament) return [];
+  useEffect(() => {
+    if (!selectedTournamentId || !selectedStageId) {
+      setTournamentTable([]);
+      setSelectedStageMeta(null);
+      setDerivedStageTable([]);
+      return;
+    }
 
-    // Temporary hardcoded config for this tournament.
-    // Later this should come from the DB.
-    return [
-      {
-        id: "group",
-        name: "Round Robin",
-        type: "league",
-        teamsCount: 6,
-        matchesPerTeam: 5,
-        qualifyTop: 3,
-        qualifyBottom: 3,
-        nextStageTopLabel: "Super League",
-        nextStageBottomLabel: "Plate League",
-        advancementLine: 3,
-        status: "current",
-      },
-      {
-        id: "super_league",
-        name: "Super League",
-        type: "league",
-        teamsCount: 3,
-        matchesPerTeam: 2,
-        qualifyTop: 2,
-        advancementLine: 2,
-        nextStageTopLabel: "Final",
-        status: "upcoming",
-      },
-      {
-        id: "plate_league",
-        name: "Plate League",
-        type: "league",
-        teamsCount: 3,
-        matchesPerTeam: 2,
-        qualifyTop: 1,
-        advancementLine: 1,
-        nextStageTopLabel: "3rd Place Playoff",
-        status: "upcoming",
-      },
-    ];
-  }, [selectedTournament]);
+    const fetchStageStandings = async () => {
+      try {
+        setLoadingStageTable(true);
+        setError("");
+        setDerivedStageTable([]);
 
-  const currentStage =
-    tournamentStageOptions.find((s) => s.status === "current") ||
-    tournamentStageOptions[0] ||
-    null;
+        const standingsRes = await api.post("/tournament-stage-standings", {
+          tournament_id: selectedTournamentId,
+          stage_id: selectedStageId,
+        });
 
-  const availableStageOptions = tournamentStageOptions.filter(
-    (s) => s.status === "current" || s.status === "completed"
-  );
+        const payload = standingsRes.data || {};
+        setTournamentTable(payload?.standings || []);
+        setSelectedStageMeta(payload?.stage || null);
+      } catch (err) {
+        console.error("Error loading tournament stage standings", err);
+        setTournamentTable([]);
+        setSelectedStageMeta(null);
+        setDerivedStageTable([]);
+        setError(
+          err?.response?.data?.detail ||
+            err.message ||
+            "Error loading tournament stage standings."
+        );
+      } finally {
+        setLoadingStageTable(false);
+      }
+    };
 
-  const selectedStage =
-    availableStageOptions.find((s) => s.id === selectedStageId) ||
-    currentStage ||
-    null;
+    fetchStageStandings();
+  }, [selectedTournamentId, selectedStageId]);
 
   useEffect(() => {
-    if (availableStageOptions.length > 0) {
-      setSelectedStageId(availableStageOptions[0].id);
-    }
-  }, [selectedTournament, availableStageOptions]);
+    const fetchPodiumStandings = async () => {
+      setPodiumStandings([]);
+
+      if (!tournamentStructure?.stages || !selectedTournamentId) return;
+
+      const leagueStages = tournamentStructure.stages.filter(
+        (stage) => String(stage.stage_type || "").toLowerCase() === "league"
+      );
+
+      if (!leagueStages.length) return;
+
+      const decisiveLeagueStage =
+        [...leagueStages].sort(
+          (a, b) => Number(b.display_order || 0) - Number(a.display_order || 0)
+        )[0] || null;
+
+      if (!decisiveLeagueStage?.stage_id) return;
+
+      try {
+        const res = await api.post("/tournament-stage-standings", {
+          tournament_id: selectedTournamentId,
+          stage_id: decisiveLeagueStage.stage_id,
+        });
+
+        const payload = res.data || {};
+        setPodiumStandings(payload?.standings || []);
+      } catch (err) {
+        console.error("Error loading podium standings", err);
+        setPodiumStandings([]);
+      }
+    };
+
+    fetchPodiumStandings();
+  }, [tournamentStructure, selectedTournamentId]);
+
+    useEffect(() => {
+    const buildDerivedStageTable = async () => {
+      if (!selectedTournamentId || !selectedStageMeta?.stage_id) return;
+
+      // If backend already has rows for this stage, do not derive anything
+      if (Array.isArray(tournamentTable) && tournamentTable.length > 0) {
+        setDerivedStageTable([]);
+        return;
+      }
+
+      const incomingRules = Array.isArray(tournamentStructure?.progressions)
+        ? tournamentStructure.progressions.filter(
+            (p) => Number(p.destination_stage_id) === Number(selectedStageMeta.stage_id)
+          )
+        : [];
+
+      if (!incomingRules.length) {
+        setDerivedStageTable([]);
+        return;
+      }
+
+      const sourceStageId = Number(incomingRules[0].source_stage_id);
+
+      try {
+        const sourceRes = await api.post("/tournament-stage-standings", {
+          tournament_id: selectedTournamentId,
+          stage_id: sourceStageId,
+        });
+
+        const sourcePayload = sourceRes.data || {};
+        const sourceStandings = Array.isArray(sourcePayload?.standings)
+          ? sourcePayload.standings
+          : [];
+        const sourceStage = sourcePayload?.stage || null;
+
+        if (!sourceStandings.length || !sourceStage) {
+          setDerivedStageTable([]);
+          return;
+        }
+
+        const sourceMatchesPerTeam = Number(sourceStage.matches_per_team || 0);
+        const sourceComplete =
+          String(sourceStage.status || "").toLowerCase() === "completed" ||
+          (sourceMatchesPerTeam > 0 &&
+            sourceStandings.every(
+              (row) => Number(row.played || 0) >= sourceMatchesPerTeam
+            ));
+
+        if (!sourceComplete) {
+          setDerivedStageTable([]);
+          return;
+        }
+
+        const carryOverMode = String(selectedStageMeta.carry_over_mode || "reset_all").toLowerCase();
+
+        const derivedTeams = sourceStandings
+          .map((row, idx) => {
+            const rank = idx + 1;
+
+            const matchingRule = incomingRules.find(
+              (rule) =>
+                rank >= Number(rule.rank_from) &&
+                rank <= Number(rule.rank_to)
+            );
+
+            if (!matchingRule) return null;
+
+            return {
+              team: row.team,
+              played: carryOverMode === "reset_all" ? 0 : Number(row.played || 0),
+              wins: carryOverMode === "reset_all" ? 0 : Number(row.wins || 0),
+              losses: carryOverMode === "reset_all" ? 0 : Number(row.losses || 0),
+              no_results: carryOverMode === "reset_all" ? 0 : Number(row.no_results || 0),
+              points: carryOverMode === "reset_all" ? 0 : Number(row.points || 0),
+              nrr: carryOverMode === "reset_all" ? 0 : Number(row.nrr || 0),
+            };
+          })
+          .filter(Boolean)
+          .sort((a, b) => {
+            if (b.points !== a.points) return b.points - a.points;
+            if (b.nrr !== a.nrr) return b.nrr - a.nrr;
+            return String(a.team).localeCompare(String(b.team));
+          });
+
+        setDerivedStageTable(derivedTeams);
+      } catch (err) {
+        console.error("Error deriving future stage standings", err);
+        setDerivedStageTable([]);
+      }
+    };
+
+    buildDerivedStageTable();
+  }, [
+    selectedTournamentId,
+    selectedStageMeta,
+    tournamentTable,
+    tournamentStructure,
+  ]);
+
+  const selectedStage = useMemo(() => {
+    return (
+      stageOptions.find(
+        (stage) => String(stage.stage_id) === String(selectedStageId)
+      ) || currentStage || null
+    );
+  }, [stageOptions, selectedStageId, currentStage]);
 
   const standingsWithMath = useMemo(() => {
-    if (!selectedStage || !tournamentTable.length) return [];
+    const baseTable =
+      Array.isArray(tournamentTable) && tournamentTable.length > 0
+        ? tournamentTable
+        : derivedStageTable;
 
-    const POINTS_PER_WIN = 2;
-    const matchesPerTeam = selectedStage.matchesPerTeam || 0;
-    const advancementLine = selectedStage.advancementLine || 1;
+    if (!selectedStageMeta || !Array.isArray(baseTable) || baseTable.length === 0) {
+      return [];
+    }
 
-    const enriched = tournamentTable.map((row) => {
+    const advancementLine = Number(selectedStageMeta?.advancement_line || 0);
+    const matchesPerTeam = Number(selectedStageMeta?.matches_per_team || 0);
+    const stageStatus = String(selectedStageMeta?.status || "").toLowerCase();
+    const progressionMode = String(selectedStageMeta?.progression_mode || "").toLowerCase();
+
+    const relevantProgressions = Array.isArray(tournamentStructure?.progressions)
+      ? tournamentStructure.progressions.filter(
+          (p) => Number(p.source_stage_id) === Number(selectedStageMeta.stage_id)
+        )
+      : [];
+
+    const getBracketLabelForRank = (rank) => {
+      if (!relevantProgressions.length) return "";
+
+      const matchingRule = relevantProgressions.find(
+        (p) => rank >= Number(p.rank_from) && rank <= Number(p.rank_to)
+      );
+
+      return matchingRule?.destination_stage_name || "";
+    };
+
+    const pointsPerWin =
+      Number(tournamentStructure?.tournament?.points_per_win || 2);
+
+    const enriched = baseTable.map((row, idx) => {
       const played = Number(row.played || 0);
       const points = Number(row.points || 0);
-      const gamesRemaining = Math.max(matchesPerTeam - played, 0);
-      const maxPossiblePoints = points + gamesRemaining * POINTS_PER_WIN;
+      const wins = Number(row.wins || 0);
+      const losses = Number(row.losses || 0);
+      const no_results = Number(row.no_results || 0);
+      const nrr =
+        typeof row.nrr === "number" ? row.nrr : Number(row.nrr || 0);
+
+      const gamesRemaining =
+        matchesPerTeam > 0 ? Math.max(matchesPerTeam - played, 0) : 0;
+
+      const maxPossiblePoints = points + gamesRemaining * pointsPerWin;
+      const rank = idx + 1;
 
       return {
         ...row,
         played,
         points,
-        wins: Number(row.wins || 0),
-        losses: Number(row.losses || 0),
-        no_results: Number(row.no_results || 0),
-        nrr: typeof row.nrr === "number" ? row.nrr : Number(row.nrr || 0),
+        wins,
+        losses,
+        no_results,
+        nrr,
         gamesRemaining,
         maxPossiblePoints,
+        rank,
+        isCutoff: advancementLine > 0 && idx === advancementLine - 1,
+        bracketLabel: getBracketLabelForRank(rank),
         status: "alive",
-        bracketLabel: "",
       };
     });
 
-    return enriched.map((team, idx, arr) => {
-      const cutoffTeam = arr[advancementLine - 1];
-      const cutoffPoints = cutoffTeam?.points ?? 0;
+    // No advancement line means no qualification colouring
+    if (!advancementLine || advancementLine <= 0) {
+      return enriched;
+    }
 
-      const teamsThatCanStillReachTeam = arr.filter(
+    // If stage is completed, ranking is final
+    if (stageStatus === "completed" || (matchesPerTeam > 0 && enriched.every((row) => row.played >= matchesPerTeam))) {
+      return enriched.map((row) => ({
+        ...row,
+        status: row.rank <= advancementLine ? "qualified" : "eliminated",
+      }));
+    }
+
+    // Live mathematical status
+    return enriched.map((team) => {
+      const cutoffTeam = enriched[advancementLine - 1];
+      const cutoffPoints = Number(cutoffTeam?.points || 0);
+
+      const teamsThatCanStillReachTeam = enriched.filter(
         (other) =>
           other.team !== team.team &&
-          other.maxPossiblePoints >= team.points
+          Number(other.maxPossiblePoints || 0) >= Number(team.points || 0)
       ).length;
 
       const qualifiedTop = teamsThatCanStillReachTeam < advancementLine;
-      const eliminatedTop = team.maxPossiblePoints < cutoffPoints;
+      const eliminatedTop = Number(team.maxPossiblePoints || 0) < cutoffPoints;
 
       let status = "alive";
       if (qualifiedTop) {
@@ -540,28 +783,334 @@ const TournamentAnalysisPage = () => {
         status = "eliminated";
       }
 
-      let bracketLabel = "";
-
-      // Only assign next-stage brackets while viewing the current group stage.
-      if (selectedStage.id === "group") {
-        if (qualifiedTop) {
-          bracketLabel = selectedStage.nextStageTopLabel || "Super League";
-        } else if (eliminatedTop) {
-          bracketLabel = selectedStage.nextStageBottomLabel || "Plate League";
-        } else {
-          bracketLabel = "";
-        }
-      }
-
       return {
         ...team,
         status,
-        rank: idx + 1,
-        isCutoff: idx === advancementLine - 1,
-        bracketLabel,
       };
     });
-  }, [tournamentTable, selectedStage]);
+  }, [tournamentTable, derivedStageTable, selectedStageMeta, tournamentStructure]);
+
+    const selectedStageMatches = useMemo(() => {
+    if (!selectedStageId) return [];
+
+    return sortedTournamentMatches.filter(
+      (match) => Number(match.stage_id) === Number(selectedStageId)
+    );
+  }, [sortedTournamentMatches, selectedStageId]);
+
+  const selectedStageCompletedMatches = useMemo(() => {
+    return selectedStageMatches.filter((match) => hasMatchResult(match));
+  }, [selectedStageMatches]);
+
+  const selectedStageUpcomingMatches = useMemo(() => {
+    return selectedStageMatches.filter((match) => !hasMatchResult(match));
+  }, [selectedStageMatches]);
+
+  const derivedKnockoutFixtures = useMemo(() => {
+    if (!selectedStageMeta?.stage_id || !tournamentStructure?.progressions) {
+      return [];
+    }
+
+    const incomingRules = tournamentStructure.progressions
+      .filter(
+        (p) => Number(p.destination_stage_id) === Number(selectedStageMeta.stage_id)
+      )
+      .sort((a, b) => {
+        const seedA = Number(a.destination_seed_from || 999);
+        const seedB = Number(b.destination_seed_from || 999);
+        return seedA - seedB;
+      });
+
+    if (!incomingRules.length) return [];
+
+    const sourceStageIds = Array.from(
+      new Set(incomingRules.map((p) => Number(p.source_stage_id)))
+    );
+
+    // Use whichever stage standings we already have in memory if they match the source stage,
+    // otherwise fall back to derivedStageTable when appropriate.
+    const sourceStageStandingsMap = new Map();
+
+    sourceStageIds.forEach((sourceStageId) => {
+      // If current visible table belongs to the source stage, use it.
+      if (Number(selectedStageMeta?.stage_id) === Number(sourceStageId)) {
+        sourceStageStandingsMap.set(sourceStageId, standingsWithMath);
+      }
+    });
+
+    // For downstream knockout stages, build from completed source stages via fetch-derived table logic:
+    // use the same tournamentStructure + stage standings already loaded in memory when possible.
+    // Since we do not cache every stage table globally yet, use tournamentTable/derivedStageTable only
+    // when it corresponds to the source stage. Otherwise this remains empty until actual match rows exist.
+    if (!sourceStageStandingsMap.size) {
+      return [];
+    }
+
+    const participants = incomingRules
+      .map((rule) => {
+        const sourceStageId = Number(rule.source_stage_id);
+        const sourceRows = sourceStageStandingsMap.get(sourceStageId) || [];
+        const rank = Number(rule.rank_from);
+
+        const participant = sourceRows.find((row) => Number(row.rank) === rank);
+        if (!participant) return null;
+
+        return {
+          seed: Number(rule.destination_seed_from || 999),
+          sourceStageId,
+          sourceStageName: rule.source_stage_name,
+          destinationStageName: rule.destination_stage_name,
+          team: participant.team,
+        };
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.seed - b.seed);
+
+    if (!participants.length) return [];
+
+    // Pair sequentially: 1v2, 3v4, 5v6...
+    const fixtures = [];
+    for (let i = 0; i < participants.length; i += 2) {
+      const a = participants[i];
+      const b = participants[i + 1] || null;
+
+      fixtures.push({
+        fixture_id: `derived-${selectedStageMeta.stage_id}-${i / 2}`,
+        team_a: a?.team || "",
+        team_b: b?.team || "",
+        isDerived: true,
+        resolvedResult: "",
+        result: "",
+        match_date: "",
+        venue: "",
+      });
+    }
+
+    return fixtures;
+  }, [
+    selectedStageMeta,
+    tournamentStructure,
+    standingsWithMath,
+  ]);
+
+  const renderKnockoutTeam = (teamNameValue) => {
+    const flagUrl = getFlagUrlForTeam(teamNameValue, 80);
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 8,
+          minWidth: 120,
+        }}
+      >
+        {flagUrl ? (
+          <img
+            src={flagUrl}
+            alt={teamNameValue || (t("home.teamFlagAlt") || "Team flag")}
+            style={{
+              width: 52,
+              height: 36,
+              borderRadius: 6,
+              objectFit: "cover",
+              boxShadow: "0 0 10px rgba(0,0,0,0.28)",
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              width: 52,
+              height: 36,
+              borderRadius: 6,
+              border: "1px solid rgba(148,163,184,0.22)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              opacity: 0.35,
+              fontSize: "0.8rem",
+            }}
+          >
+            —
+          </div>
+        )}
+
+        <div
+          style={{
+            fontSize: "0.82rem",
+            fontWeight: 700,
+            textAlign: "center",
+            lineHeight: 1.2,
+          }}
+        >
+          {teamNameValue || (t("tournament.toBeConfirmed") || "TBC")}
+        </div>
+      </div>
+    );
+  };
+
+    const renderKnockoutStageView = () => {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {knockoutFixturesToRender.length > 0 ? (
+          knockoutFixturesToRender.map((match, idx) => {
+            const hasResult = hasMatchResult(match);
+            const clickable = !!match.match_id;
+
+            return (
+              <div
+                key={match.match_id || match.fixture_id || idx}
+                onClick={() => {
+                  if (!clickable) return;
+                  setSelectedResultMatch(match);
+                  setShowScorecardModal(true);
+                }}
+                style={{
+                  borderRadius: 16,
+                  border: "1px solid rgba(148,163,184,0.18)",
+                  background: isDarkMode
+                    ? "linear-gradient(180deg, rgba(15,23,42,0.84), rgba(15,23,42,0.70))"
+                    : "linear-gradient(180deg, rgba(255,255,255,0.94), rgba(248,250,252,0.82))",
+                  padding: 16,
+                  boxShadow: "0 8px 20px rgba(0,0,0,0.12)",
+                  cursor: clickable ? "pointer" : "default",
+                  transition: "transform 0.18s ease, box-shadow 0.18s ease",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: 12,
+                    marginBottom: 12,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "0.76rem",
+                      fontWeight: 700,
+                      opacity: 0.7,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.04em",
+                    }}
+                  >
+                    {selectedStageMeta?.stage_name || selectedStage?.name || "Fixture"}
+                    {knockoutFixturesToRender.length > 1 ? ` ${idx + 1}` : ""}
+                  </div>
+
+                  {(match.match_date || match.venue) && (
+                    <div
+                      style={{
+                        fontSize: "0.7rem",
+                        opacity: 0.7,
+                        textAlign: "right",
+                      }}
+                    >
+                      {match.match_date || ""}
+                      {match.match_date && match.venue ? " • " : ""}
+                      {match.venue || ""}
+                    </div>
+                  )}
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 12,
+                    marginBottom: 12,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  {renderKnockoutTeam(match.team_a)}
+
+                  <div
+                    style={{
+                      fontSize: "1.05rem",
+                      fontWeight: 800,
+                      opacity: 0.75,
+                      letterSpacing: "0.08em",
+                    }}
+                  >
+                    VS
+                  </div>
+
+                  {renderKnockoutTeam(match.team_b)}
+                </div>
+
+                <div
+                  style={{
+                    minHeight: 24,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                  }}
+                >
+                  {hasResult ? (
+                    <div
+                      style={{
+                        fontSize: "0.8rem",
+                        fontWeight: 700,
+                        color: theme.accentColor,
+                      }}
+                    >
+                      {match.resolvedResult || match.result}
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        fontSize: "0.74rem",
+                        opacity: 0.7,
+                      }}
+                    >
+                      {match.isDerived
+                        ? t("tournament.projectedMatchUp") || "Projected matchup"
+                        : t("tournament.fixtureScheduledLabel") || "Scheduled fixture"}
+                    </div>
+                  )}
+                </div>
+
+                {clickable && (
+                  <div
+                    style={{
+                      marginTop: 8,
+                      fontSize: "0.64rem",
+                      opacity: 0.55,
+                      textAlign: "center",
+                    }}
+                  >
+                    {t("tournament.clickForScorecard") || "Click to view scorecard"}
+                  </div>
+                )}
+              </div>
+            );
+          })
+        ) : (
+          <div style={{ fontSize: "0.8rem", opacity: 0.75 }}>
+            {t("tournament.noKnockoutFixtures") ||
+              "No fixtures are available for this elimination stage yet."}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const knockoutFixturesToRender = useMemo(() => {
+    if (selectedStageMatches.length > 0) {
+      return selectedStageMatches;
+    }
+    return derivedKnockoutFixtures;
+  }, [selectedStageMatches, derivedKnockoutFixtures]);
+
+  const isKnockoutStyleStage = useMemo(() => {
+    const stageType = String(selectedStageMeta?.stage_type || "").toLowerCase();
+    return stageType === "knockout" || stageType === "classification";
+  }, [selectedStageMeta]);
 
   const getStandingsRowStyle = (row) => {
     const base = {
@@ -597,6 +1146,178 @@ const TournamentAnalysisPage = () => {
         : "rgba(255,255,255,0.55)",
     };
   };
+
+  const tournamentCompletion = useMemo(() => {
+    const stages = Array.isArray(tournamentStructure?.stages)
+      ? tournamentStructure.stages
+      : [];
+
+    const allMatches = Array.isArray(sortedTournamentMatches)
+      ? sortedTournamentMatches
+      : [];
+
+    const finalStage = stages.find(
+      (stage) =>
+        String(stage.stage_name || "").toLowerCase() === "final" &&
+        String(stage.stage_type || "").toLowerCase() === "knockout"
+    );
+
+    const thirdPlaceStage = stages.find((stage) => {
+      const name = String(stage.stage_name || "").toLowerCase();
+      return (
+        String(stage.stage_type || "").toLowerCase() === "classification" &&
+        (name.includes("3rd") || name.includes("third"))
+      );
+    });
+
+    const finalMatch = finalStage
+      ? allMatches.find(
+          (match) => Number(match.stage_id) === Number(finalStage.stage_id)
+        )
+      : null;
+
+    const thirdPlaceMatch = thirdPlaceStage
+      ? allMatches.find(
+          (match) => Number(match.stage_id) === Number(thirdPlaceStage.stage_id)
+        )
+      : null;
+
+    const standingsOnlyTournament = !finalStage;
+
+    const finalComplete =
+      !finalStage ||
+      (
+        String(finalStage.status || "").toLowerCase() === "completed" &&
+        !!finalMatch
+      );
+
+    const thirdPlaceComplete =
+      !thirdPlaceStage ||
+      (
+        String(thirdPlaceStage.status || "").toLowerCase() === "completed" &&
+        !!thirdPlaceMatch
+      );
+
+    return {
+      isComplete: standingsOnlyTournament || (finalComplete && thirdPlaceComplete),
+      standingsOnlyTournament,
+      finalStage,
+      thirdPlaceStage,
+      finalMatch,
+      thirdPlaceMatch,
+    };
+  }, [tournamentStructure, sortedTournamentMatches]);
+
+  const podiumData = useMemo(() => {
+    if (!tournamentCompletion.isComplete) return null;
+
+    const stages = Array.isArray(tournamentStructure?.stages)
+      ? tournamentStructure.stages
+      : [];
+
+    const allMatches = Array.isArray(sortedTournamentMatches)
+      ? sortedTournamentMatches
+      : [];
+
+    const leagueStages = stages.filter(
+      (stage) => String(stage.stage_type || "").toLowerCase() === "league"
+    );
+
+    const decisiveLeagueStage =
+      [...leagueStages].sort(
+        (a, b) => Number(b.display_order || 0) - Number(a.display_order || 0)
+      )[0] || null;
+
+    const decisiveLeagueStageId = Number(decisiveLeagueStage?.stage_id || 0);
+
+    const decisiveLeagueRows =
+      decisiveLeagueStageId && Array.isArray(allMatches)
+        ? null
+        : null;
+
+    // Build standings source from currently visible standings if it belongs to the decisive stage.
+    const decisiveStandings = Array.isArray(podiumStandings)
+      ? podiumStandings.map((row, idx) => ({
+          ...row,
+          rank: idx + 1,
+        }))
+      : [];
+
+    const finalMatch = tournamentCompletion.finalMatch;
+    const thirdPlaceMatch = tournamentCompletion.thirdPlaceMatch;
+
+    // CASE 1: standings-only tournament
+    if (tournamentCompletion.standingsOnlyTournament) {
+      if (!decisiveStandings || decisiveStandings.length < 3) return null;
+
+      return {
+        first: decisiveStandings[0]?.team || null,
+        second: decisiveStandings[1]?.team || null,
+        third: decisiveStandings[2]?.team || null,
+      };
+    }
+
+    // CASE 2/3: tournament with final
+    if (!finalMatch) return null;
+
+    const finalWinnerId = Number(finalMatch.winner_id || 0);
+
+    let first = null;
+    let second = null;
+
+    if (finalWinnerId && Number(finalMatch.team_a_id) === finalWinnerId) {
+      first = finalMatch.team_a;
+      second = finalMatch.team_b;
+    } else if (finalWinnerId && Number(finalMatch.team_b_id) === finalWinnerId) {
+      first = finalMatch.team_b;
+      second = finalMatch.team_a;
+    }
+
+    if (!first || !second) return null;
+
+    // CASE 2: final + 3rd place playoff
+    if (thirdPlaceMatch) {
+      const thirdWinnerId = Number(thirdPlaceMatch.winner_id || 0);
+
+      let third = null;
+      if (thirdWinnerId && Number(thirdPlaceMatch.team_a_id) === thirdWinnerId) {
+        third = thirdPlaceMatch.team_a;
+      } else if (thirdWinnerId && Number(thirdPlaceMatch.team_b_id) === thirdWinnerId) {
+        third = thirdPlaceMatch.team_b;
+      }
+
+      return {
+        first,
+        second,
+        third,
+      };
+    }
+
+    // CASE 3: final only, no 3rd place playoff
+    // 3rd comes from decisive league standings excluding the two finalists
+    if (!decisiveStandings || decisiveStandings.length === 0) {
+      return {
+        first,
+        second,
+        third: null,
+      };
+    }
+
+    const thirdCandidate = decisiveStandings.find(
+      (row) => row.team !== first && row.team !== second
+    );
+
+    return {
+      first,
+      second,
+      third: thirdCandidate?.team || null,
+    };
+  }, [
+    tournamentCompletion,
+    tournamentStructure,
+    sortedTournamentMatches,
+    podiumStandings,
+  ]);
 
 
   const battingStatOptions = [
@@ -783,6 +1504,43 @@ const TournamentAnalysisPage = () => {
     },
   };
 
+  const getWinningTeamFromResult = (match) => {
+    if (!match) return null;
+
+    const resultText = String(match.resolvedResult || match.result || "").toLowerCase();
+    const teamA = match.team_a;
+    const teamB = match.team_b;
+
+    if (!teamA || !teamB || !resultText) return null;
+
+    if (resultText.includes(String(teamA).toLowerCase())) return teamA;
+    if (resultText.includes(String(teamB).toLowerCase())) return teamB;
+
+    return null;
+  };
+
+  const getLosingTeamFromResult = (match) => {
+    const winner = getWinningTeamFromResult(match);
+    if (!winner || !match) return null;
+    return winner === match.team_a ? match.team_b : match.team_a;
+  };
+
+  const tournamentPodium = useMemo(() => {
+    if (!tournamentCompletion.isComplete) return null;
+
+    const champion = getWinningTeamFromResult(tournamentCompletion.finalMatch);
+    const runnerUp = getLosingTeamFromResult(tournamentCompletion.finalMatch);
+    const thirdPlace = getWinningTeamFromResult(tournamentCompletion.thirdPlaceMatch);
+
+    if (!champion || !runnerUp || !thirdPlace) return null;
+
+    return {
+      champion,
+      runnerUp,
+      thirdPlace,
+    };
+  }, [tournamentCompletion]);
+
   if (loadingTournaments) {
     return (
       <div className="d-flex align-items-center gap-2">
@@ -901,6 +1659,7 @@ const TournamentAnalysisPage = () => {
                     value={selectedTournament}
                     onChange={(e) => {
                       setSelectedTournament(e.target.value);
+                      setSelectedStageId(null);
                       setActiveDetail(null);
                     }}
                   >
@@ -1043,244 +1802,504 @@ const TournamentAnalysisPage = () => {
                   </span>
                 </div>
               ) : (
-                <Row className="g-3">
-
-                  {/* Results */}
-                  <Col md={4}>
+                <>
+                  {podiumData && (
                     <div
                       style={{
-                        height: "100%",
-                        borderRadius: 18,
-                        border: "1px solid rgba(148,163,184,0.28)",
+                        marginBottom: 18,
+                        borderRadius: 20,
+                        border: "1px solid rgba(148,163,184,0.22)",
                         background: isDarkMode
-                          ? "linear-gradient(180deg, rgba(15,23,42,0.78), rgba(15,23,42,0.62))"
-                          : "linear-gradient(180deg, rgba(255,255,255,0.88), rgba(248,250,252,0.74))",
-                        padding: 14,
-                        boxShadow: "0 10px 28px rgba(0,0,0,0.18)",
-                        backdropFilter: "blur(8px)",
-                        display: "flex",
-                        flexDirection: "column",
+                          ? "linear-gradient(180deg, rgba(15,23,42,0.86), rgba(15,23,42,0.68))"
+                          : "linear-gradient(180deg, rgba(255,255,255,0.94), rgba(248,250,252,0.82))",
+                        boxShadow: "0 10px 28px rgba(0,0,0,0.16)",
+                        padding: "20px 18px 16px",
                       }}
                     >
                       <div
                         style={{
-                          fontSize: "0.96rem",
-                          fontWeight: 700,
-                          marginBottom: 10,
+                          fontSize: "1rem",
+                          fontWeight: 800,
+                          marginBottom: 14,
+                          textAlign: "center",
                         }}
                       >
-                        {t("tournament.resultsTitle") || "Match Results"}
+                        {t("tournament.podiumTitle") || "Tournament Podium"}
                       </div>
 
-                      {tournamentMatches.length > 0 ? (
+                      <div
+                        style={{
+                          display: "grid",
+                          gridTemplateColumns: "1fr 1fr 1fr",
+                          gap: 14,
+                          alignItems: "end",
+                        }}
+                      >
+                        {[
+                          {
+                            place: 2,
+                            team: podiumData.second,
+                            height: 88,
+                          },
+                          {
+                            place: 1,
+                            team: podiumData.first,
+                            height: 128,
+                          },
+                          {
+                            place: 3,
+                            team: podiumData.third,
+                            height: 68,
+                          },
+                        ].map((item) => {
+                          const flagUrl = getFlagUrlForTeam(item.team, 80);
+
+                          return (
+                            <div
+                              key={`${item.place}-${item.team}`}
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "flex-end",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  marginBottom: 10,
+                                  textAlign: "center",
+                                }}
+                              >
+                                {flagUrl ? (
+                                  <img
+                                    src={flagUrl}
+                                    alt={item.team || "Flag"}
+                                    style={{
+                                      width: 34,
+                                      height: 24,
+                                      borderRadius: 4,
+                                      objectFit: "cover",
+                                      boxShadow: "0 0 10px rgba(0,0,0,0.28)",
+                                      marginBottom: 8,
+                                    }}
+                                  />
+                                ) : null}
+
+                                <div
+                                  style={{
+                                    fontSize: "0.82rem",
+                                    fontWeight: 700,
+                                    lineHeight: 1.2,
+                                    maxWidth: 140,
+                                  }}
+                                >
+                                  {item.team || "—"}
+                                </div>
+                              </div>
+
+                              <div
+                                style={{
+                                  width: "100%",
+                                  maxWidth: 140,
+                                  height: item.height,
+                                  borderRadius: "16px 16px 8px 8px",
+                                  background:
+                                    item.place === 1
+                                      ? "linear-gradient(180deg, rgba(250,204,21,0.9), rgba(234,179,8,0.72))"
+                                      : item.place === 2
+                                      ? "linear-gradient(180deg, rgba(226,232,240,0.92), rgba(148,163,184,0.72))"
+                                      : "linear-gradient(180deg, rgba(251,146,60,0.9), rgba(234,88,12,0.72))",
+                                  border: "1px solid rgba(255,255,255,0.18)",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  boxShadow: "0 8px 20px rgba(0,0,0,0.16)",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    fontSize: "1.4rem",
+                                    fontWeight: 900,
+                                    color: "#0f172a",
+                                  }}
+                                >
+                                  {item.place}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  <Row className="g-3">
+
+                    {/* Results */}
+                    <Col md={4}>
+                      <div
+                        style={{
+                          height: "100%",
+                          borderRadius: 18,
+                          border: "1px solid rgba(148,163,184,0.28)",
+                          background: isDarkMode
+                            ? "linear-gradient(180deg, rgba(15,23,42,0.78), rgba(15,23,42,0.62))"
+                            : "linear-gradient(180deg, rgba(255,255,255,0.88), rgba(248,250,252,0.74))",
+                          padding: 14,
+                          boxShadow: "0 10px 28px rgba(0,0,0,0.18)",
+                          backdropFilter: "blur(8px)",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: "0.96rem",
+                            fontWeight: 700,
+                            marginBottom: 10,
+                          }}
+                        >
+                          {t("tournament.resultsTitle") || "Match Results"}
+                        </div>
+
+                        {tournamentMatches.length > 0 ? (
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: 14,
+                              flex: 1,
+                              maxHeight: 800,
+                              overflowY:
+                                completedMatches.length + upcomingMatches.length > 4
+                                  ? "auto"
+                                  : "visible",
+                              paddingRight:
+                                completedMatches.length + upcomingMatches.length > 4
+                                  ? 4
+                                  : 0,
+                              scrollbarWidth: "thin",
+                            }}
+                          >
+                            {/* Completed matches */}
+                            <div>
+                              <div
+                                style={{
+                                  fontSize: "0.75rem",
+                                  fontWeight: 700,
+                                  opacity: 0.72,
+                                  marginBottom: 8,
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.04em",
+                                }}
+                              >
+                                {t("tournament.completedMatchesTitle") || "Completed Matches"}
+                              </div>
+
+                              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                                {completedMatches.length > 0 ? (
+                                  completedMatches.map((match, idx) => {
+                                    const isOurMatch =
+                                      [match.team_a, match.team_b]
+                                        .map((x) => String(x || "").trim().toLowerCase())
+                                        .includes(String(teamName || "").trim().toLowerCase());
+
+                                    return (
+                                      <div
+                                        key={`completed_${match.match_id || idx}`}
+                                        onClick={() => {
+                                          setSelectedResultMatch(match);
+                                          setShowScorecardModal(true);
+                                        }}
+                                        style={{
+                                          position: "relative",
+                                          flex: 1,
+                                          minHeight: 60,
+                                          borderRadius: 14,
+                                          padding: "12px 12px 12px 14px",
+                                          cursor: "pointer",
+                                          transition:
+                                            "transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease",
+                                          background: isOurMatch
+                                            ? isDarkMode
+                                              ? "linear-gradient(180deg, rgba(30,41,59,0.9), rgba(15,23,42,0.88))"
+                                              : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(241,245,249,0.95))"
+                                            : isDarkMode
+                                            ? "rgba(255,255,255,0.03)"
+                                            : "rgba(255,255,255,0.65)",
+                                          border: isOurMatch
+                                            ? `1px solid ${theme.accentColor}`
+                                            : "1px solid rgba(148,163,184,0.18)",
+                                          boxShadow: isOurMatch
+                                            ? `0 0 0 1px ${theme.accentColor}22, 0 8px 18px rgba(0,0,0,0.18)`
+                                            : "0 4px 12px rgba(0,0,0,0.08)",
+                                          display: "flex",
+                                          flexDirection: "column",
+                                          justifyContent: "center",
+                                        }}
+                                      >
+                                        <div
+                                          style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "flex-start",
+                                            gap: 10,
+                                            marginBottom: 6,
+                                          }}
+                                        >
+                                          <div
+                                            style={{
+                                              fontSize: "0.72rem",
+                                              fontWeight: 600,
+                                              lineHeight: 1.25,
+                                            }}
+                                          >
+                                            {match.team_a} vs {match.team_b}
+                                          </div>
+
+                                          <div
+                                            style={{
+                                              fontSize: "0.55rem",
+                                              opacity: 0.72,
+                                              whiteSpace: "nowrap",
+                                            }}
+                                          >
+                                            {match.match_date || "—"}
+                                          </div>
+                                        </div>
+
+                                        <div
+                                          style={{
+                                            fontSize: "0.55rem",
+                                            opacity: 0.92,
+                                            lineHeight: 1.35,
+                                          }}
+                                        >
+                                          {match.resolvedResult ||
+                                            match.result ||
+                                            t("tournament.resultTbc") ||
+                                            "Result TBC"}
+                                        </div>
+
+                                        <div
+                                          style={{
+                                            marginTop: 6,
+                                            fontSize: "0.52rem",
+                                            opacity: 0.58,
+                                            letterSpacing: "0.02em",
+                                          }}
+                                        >
+                                          {t("tournament.clickForScorecard") || "Click to view scorecard"}
+                                        </div>
+                                      </div>
+                                    );
+                                  })
+                                ) : (
+                                  <div style={{ fontSize: "0.72rem", opacity: 0.65 }}>
+                                    {t("tournament.noCompletedMatches") || "No completed matches yet."}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Upcoming matches */}
+                            <div>
+                              <div
+                                style={{
+                                  fontSize: "0.75rem",
+                                  fontWeight: 700,
+                                  opacity: 0.72,
+                                  marginBottom: 8,
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.04em",
+                                }}
+                              >
+                                {t("tournament.upcomingMatchesTitle") || "Upcoming Matches"}
+                              </div>
+
+                              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                                {upcomingMatches.length > 0 ? (
+                                  upcomingMatches.map((match, idx) => {
+                                    const isOurMatch =
+                                      [match.team_a, match.team_b]
+                                        .map((x) => String(x || "").trim().toLowerCase())
+                                        .includes(String(teamName || "").trim().toLowerCase());
+
+                                    return (
+                                      <div
+                                        key={`upcoming_${match.match_id || idx}`}
+                                        style={{
+                                          minHeight: 56,
+                                          borderRadius: 14,
+                                          padding: "12px 12px 12px 14px",
+                                          background: isOurMatch
+                                            ? isDarkMode
+                                              ? "linear-gradient(180deg, rgba(30,41,59,0.82), rgba(15,23,42,0.76))"
+                                              : "linear-gradient(180deg, rgba(255,255,255,0.94), rgba(241,245,249,0.92))"
+                                            : isDarkMode
+                                            ? "rgba(255,255,255,0.025)"
+                                            : "rgba(255,255,255,0.6)",
+                                          border: isOurMatch
+                                            ? `1px solid ${theme.accentColor}88`
+                                            : "1px solid rgba(148,163,184,0.16)",
+                                          boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
+                                          display: "flex",
+                                          flexDirection: "column",
+                                          justifyContent: "center",
+                                        }}
+                                      >
+                                        <div
+                                          style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "flex-start",
+                                            gap: 10,
+                                            marginBottom: 4,
+                                          }}
+                                        >
+                                          <div
+                                            style={{
+                                              fontSize: "0.72rem",
+                                              fontWeight: 600,
+                                              lineHeight: 1.25,
+                                            }}
+                                          >
+                                            {match.team_a} vs {match.team_b}
+                                          </div>
+
+                                          <div
+                                            style={{
+                                              fontSize: "0.55rem",
+                                              opacity: 0.72,
+                                              whiteSpace: "nowrap",
+                                            }}
+                                          >
+                                            {match.match_date || "—"}
+                                          </div>
+                                        </div>
+
+                                        <div
+                                          style={{
+                                            fontSize: "0.55rem",
+                                            opacity: 0.72,
+                                            lineHeight: 1.3,
+                                            fontStyle: "italic",
+                                          }}
+                                        >
+                                          {t("tournament.scheduledMatchLabel") || "Scheduled"}
+                                        </div>
+                                      </div>
+                                    );
+                                  })
+                                ) : (
+                                  <div style={{ fontSize: "0.72rem", opacity: 0.65 }}>
+                                    {t("tournament.noUpcomingMatches") || "No upcoming matches scheduled."}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div style={{ fontSize: "0.8rem", opacity: 0.75 }}>
+                            {t("tournament.noResults") || "No match results available yet."}
+                          </div>
+                        )}
+                      </div>
+                    </Col>
+
+                    {/* Points table */}
+                    <Col md={8}>
+                      <div
+                        style={{
+                          height: "100%",
+                          minHeight: 320,
+                          borderRadius: 18,
+                          border: "1px solid rgba(148,163,184,0.28)",
+                          background: isDarkMode
+                            ? "linear-gradient(180deg, rgba(15,23,42,0.78), rgba(15,23,42,0.62))"
+                            : "linear-gradient(180deg, rgba(255,255,255,0.88), rgba(248,250,252,0.74))",
+                          padding: 14,
+                          boxShadow: "0 10px 28px rgba(0,0,0,0.18)",
+                          backdropFilter: "blur(8px)",
+                        }}
+                      >
                         <div
                           style={{
                             display: "flex",
-                            flexDirection: "column",
-                            gap: 10,
-                            flex: 1,
-                            maxHeight: 800,
-                            overflowY: tournamentMatches.length > 4 ? "auto" : "visible",
-                            paddingRight: tournamentMatches.length > 4 ? 4 : 0,
-                            scrollbarWidth: "thin",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            gap: 12,
+                            marginBottom: 12,
+                            flexWrap: "wrap",
                           }}
                         >
-                          {tournamentMatches.map((match, idx) => {
-                            const isOurMatch =
-                              [match.team_a, match.team_b]
-                                .map((x) => String(x || "").trim().toLowerCase())
-                                .includes(String(teamName || "").trim().toLowerCase());
-
-                            return (
-                            <div
-                              key={match.match_id || idx}
-                              onClick={() => {
-                                setSelectedResultMatch(match);
-                                setShowScorecardModal(true);
-                              }}
-                              style={{
-                                position: "relative",
-                                flex: 1,
-                                minHeight: 60,
-                                borderRadius: 14,
-                                padding: "12px 12px 12px 14px",
-                                cursor: "pointer",
-                                transition: "transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease",
-                                background: isOurMatch
-                                  ? isDarkMode
-                                    ? "linear-gradient(180deg, rgba(30,41,59,0.9), rgba(15,23,42,0.88))"
-                                    : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(241,245,249,0.95))"
-                                  : isDarkMode
-                                  ? "rgba(255,255,255,0.03)"
-                                  : "rgba(255,255,255,0.65)",
-                                border: isOurMatch
-                                  ? `1px solid ${theme.accentColor}`
-                                  : "1px solid rgba(148,163,184,0.18)",
-                                boxShadow: isOurMatch
-                                  ? `0 0 0 1px ${theme.accentColor}22, 0 8px 18px rgba(0,0,0,0.18)`
-                                  : "0 4px 12px rgba(0,0,0,0.08)",
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "center",
-                              }}
-                            >
-
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "flex-start",
-                                    gap: 10,
-                                    marginBottom: 6,
-                                  }}
-                                >
-                                  <div
-                                    style={{
-                                      fontSize: "0.72rem",
-                                      fontWeight: 600,
-                                      lineHeight: 1.25,
-                                    }}
-                                  >
-                                    {match.team_a} vs {match.team_b}
-
-                                  </div>
-
-                                  <div
-                                    style={{
-                                      fontSize: "0.55rem",
-                                      opacity: 0.72,
-                                      whiteSpace: "nowrap",
-                                    }}
-                                  >
-                                    {match.match_date || "—"}
-                                  </div>
-                                </div>
-
-                                <div
-                                  style={{
-                                    fontSize: "0.55rem",
-                                    opacity: 0.92,
-                                    lineHeight: 1.35,
-                                  }}
-                                >
-                                  {match.resolvedResult ||
-                                    match.result ||
-                                    t("tournament.resultTbc") ||
-                                    "Result TBC"}
-                                </div>
-                                <div
-                                  style={{
-                                    marginTop: 6,
-                                    fontSize: "0.52rem",
-                                    opacity: 0.58,
-                                    letterSpacing: "0.02em",
-                                  }}
-                                >
-                                  {t("tournament.clickForScorecard") || "Click to view scorecard"}
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      ) : (
-                        <div style={{ fontSize: "0.8rem", opacity: 0.75 }}>
-                          {t("tournament.noResults") || "No match results available yet."}
-                        </div>
-                      )}
-                    </div>
-                  </Col>
-
-                  {/* Points table */}
-                  <Col md={8}>
-                    <div
-                      style={{
-                        height: "100%",
-                        minHeight: 320,
-                        borderRadius: 18,
-                        border: "1px solid rgba(148,163,184,0.28)",
-                        background: isDarkMode
-                          ? "linear-gradient(180deg, rgba(15,23,42,0.78), rgba(15,23,42,0.62))"
-                          : "linear-gradient(180deg, rgba(255,255,255,0.88), rgba(248,250,252,0.74))",
-                        padding: 14,
-                        boxShadow: "0 10px 28px rgba(0,0,0,0.18)",
-                        backdropFilter: "blur(8px)",
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          gap: 12,
-                          marginBottom: 12,
-                          flexWrap: "wrap",
-                        }}
-                      >
-                        <div>
-                          <div
-                            style={{
-                              fontSize: "0.96rem",
-                              fontWeight: 700,
-                              marginBottom: 2,
-                            }}
-                          >
-                            {t("tournament.pointsTableTitle") || "Points Table"}
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "0.74rem",
-                              opacity: 0.72,
-                            }}
-                          >
-                            {selectedStage?.name || "Stage standings"}
-                          </div>
-                        </div>
-
-                        <div>
-                          {availableStageOptions.length > 1 ? (
-                            <Form.Select
-                              size="sm"
-                              value={selectedStageId}
-                              onChange={(e) => setSelectedStageId(e.target.value)}
-                              style={{
-                                minWidth: 180,
-                                borderRadius: 999,
-                                fontSize: "0.78rem",
-                                fontWeight: 600,
-                                backgroundColor: isDarkMode
-                                  ? "rgba(15,23,42,0.92)"
-                                  : "rgba(255,255,255,0.96)",
-                                color: "var(--color-text-primary)",
-                                border: "1px solid rgba(148,163,184,0.35)",
-                                boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
-                              }}
-                            >
-                              {availableStageOptions.map((stage) => (
-                                <option key={stage.id} value={stage.id}>
-                                  {stage.name}
-                                </option>
-                              ))}
-                            </Form.Select>
-                          ) : (
+                          <div>
                             <div
                               style={{
-                                fontSize: "0.8rem",
-                                fontWeight: 600,
-                                padding: "6px 12px",
-                                borderRadius: 999,
-                                backgroundColor: isDarkMode
-                                  ? "rgba(30,41,59,0.72)"
-                                  : "rgba(255,255,255,0.72)",
-                                border: "1px solid rgba(148,163,184,0.25)",
+                                fontSize: "0.96rem",
+                                fontWeight: 700,
+                                marginBottom: 2,
                               }}
                             >
-                              {currentStage?.name || "Round Robin"}
+                              {t("tournament.pointsTableTitle") || "Points Table"}
                             </div>
-                          )}
-                        </div>
-                      </div>
+                            <div
+                              style={{
+                                fontSize: "0.74rem",
+                                opacity: 0.72,
+                              }}
+                            >
+                              {selectedStageMeta?.stage_name || selectedStage?.name || "Stage standings"}
+                            </div>
+                          </div>
 
-                      {standingsWithMath.length > 0 ? (
+                          <div>
+                            {stageOptions.length > 1 ? (
+                              <Form.Select
+                                size="sm"
+                                value={selectedStageId || ""}
+                                onChange={(e) => setSelectedStageId(Number(e.target.value))}
+                                style={{
+                                  minWidth: 180,
+                                  borderRadius: 999,
+                                  fontSize: "0.78rem",
+                                  fontWeight: 600,
+                                  backgroundColor: isDarkMode
+                                    ? "rgba(15,23,42,0.92)"
+                                    : "rgba(255,255,255,0.96)",
+                                  color: "var(--color-text-primary)",
+                                  border: "1px solid rgba(148,163,184,0.35)",
+                                  boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
+                                }}
+                              >
+                                {stageOptions.map((stage) => (
+                                  <option key={stage.stage_id} value={stage.stage_id}>
+                                    {stage.name}
+                                  </option>
+                                ))}
+                              </Form.Select>
+                            ) : (
+                              <div
+                                style={{
+                                  fontSize: "0.8rem",
+                                  fontWeight: 600,
+                                  padding: "6px 12px",
+                                  borderRadius: 999,
+                                  backgroundColor: isDarkMode
+                                    ? "rgba(30,41,59,0.72)"
+                                    : "rgba(255,255,255,0.72)",
+                                  border: "1px solid rgba(148,163,184,0.25)",
+                                }}
+                              >
+                                {selectedStageMeta?.stage_name || currentStage?.stage_name || "Stage"}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                      {isKnockoutStyleStage ? (
+                        renderKnockoutStageView()
+                      ) : standingsWithMath.length > 0 ? (
                         <div
                           style={{
                             display: "flex",
@@ -1352,7 +2371,6 @@ const TournamentAnalysisPage = () => {
                                     <div>
                                       <div style={{ fontWeight: 700, lineHeight: 1.15 }}>
                                         {row.team}
-
                                       </div>
                                       <div
                                         style={{
@@ -1378,18 +2396,13 @@ const TournamentAnalysisPage = () => {
                                             borderRadius: 999,
                                             fontSize: "0.68rem",
                                             fontWeight: 700,
-                                            background:
-                                              row.bracketLabel === "Super League"
-                                                ? "rgba(34,197,94,0.18)"
-                                                : "rgba(239,68,68,0.16)",
-                                            color:
-                                              row.bracketLabel === "Super League"
-                                                ? "#22c55e"
-                                                : "#f87171",
-                                            border:
-                                              row.bracketLabel === "Super League"
-                                                ? "1px solid rgba(34,197,94,0.32)"
-                                                : "1px solid rgba(239,68,68,0.28)",
+                                            background: isDarkMode
+                                              ? "rgba(59,130,246,0.16)"
+                                              : "rgba(59,130,246,0.10)",
+                                            color: isDarkMode ? "#93c5fd" : "#1d4ed8",
+                                            border: isDarkMode
+                                              ? "1px solid rgba(147,197,253,0.24)"
+                                              : "1px solid rgba(29,78,216,0.18)",
                                             whiteSpace: "nowrap",
                                           }}
                                         >
@@ -1467,8 +2480,15 @@ const TournamentAnalysisPage = () => {
                               lineHeight: 1.4,
                             }}
                           >
-                            {t("tournament.pointsTableNote") ||
-                              "Green = mathematically locked into the top bracket. Red = mathematically eliminated from the top bracket. Teams remain unassigned until their next stage is confirmed."}
+                            {selectedStageMeta?.advancement_line
+                              ? (
+                                  t("tournament.pointsTableNoteStageProgression") ||
+                                  "Green = qualified. Red = eliminated. The line marks the qualification cutoff for this stage."
+                                )
+                              : (
+                                  t("tournament.pointsTableNoteStage") ||
+                                  "This table shows the standings for the selected stage."
+                                )}
                           </div>
                         </div>
                       ) : (
@@ -1477,9 +2497,10 @@ const TournamentAnalysisPage = () => {
                             "No points table available yet."}
                         </div>
                       )}
-                    </div>
-                  </Col>
-                </Row>
+                      </div>
+                    </Col>
+                  </Row>
+                 </>
               )}
             </Card.Body>
           </Card>
