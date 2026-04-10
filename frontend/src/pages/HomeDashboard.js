@@ -392,17 +392,11 @@ const HomeDashboard = () => {
                   </span>
                 </li>
                 <li className="mb-2">
-                  <span className="text-muted">
+                  <Link to="/tournaments" className="text-decoration-none">
                     🏆 {t("home.quickLinkTournamentSummary")}
-                  </span>
+                  </Link>
                 </li>
               </ul>
-              <p
-                className="card-text mb-1"
-                style={{ fontSize: "0.8rem" }}
-              >
-                {t("home.quickLinksFooter")}
-              </p>
             </div>
           </div>
         </div>
