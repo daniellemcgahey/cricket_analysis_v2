@@ -7967,7 +7967,7 @@ def get_batting_leaderboards(payload: dict):
         JOIN matches m ON i.match_id = m.match_id
         WHERE m.tournament_id = ? AND i.batting_team IN ({','.join('?'*len(country_names))})
         GROUP BY be.batter_id
-        HAVING balls_faced >= 30
+        HAVING balls_faced >= 1
         ORDER BY strike_rate DESC LIMIT 10
     """, [tournament_id] + country_names)
     leaderboards["Highest Strike Rates"] = [dict(row) for row in cursor.fetchall()]
@@ -8098,7 +8098,7 @@ def get_batting_leaderboards(payload: dict):
         JOIN matches m ON i.match_id = m.match_id
         WHERE m.tournament_id = ? AND i.batting_team IN ({','.join('?' * len(country_names))})
         GROUP BY be.batter_id
-        HAVING balls_faced >= 30
+        HAVING balls_faced >= 1
         ORDER BY scoring_shot_percentage DESC LIMIT 10
     """, [tournament_id] + country_names)
 
@@ -8328,7 +8328,7 @@ def get_tournament_bowling_leaders(payload: TournamentBowlingLeadersPayload):
             m.tournament_id = ?
             AND i.bowling_team IN ({placeholders})
         GROUP BY be.bowler_id
-        HAVING total_wickets >= 4
+        HAVING total_wickets >= 1
         ORDER BY avg_bowling ASC
         LIMIT 10
     """, [tournament_id] + country_names)
@@ -8360,7 +8360,7 @@ def get_tournament_bowling_leaders(payload: TournamentBowlingLeadersPayload):
             m.tournament_id = ?
             AND i.bowling_team IN ({placeholders})
         GROUP BY be.bowler_id
-        HAVING legal_deliveries >= 30
+        HAVING legal_deliveries >= 1
         ORDER BY economy ASC
         LIMIT 10
     """, [tournament_id] + country_names)
@@ -8398,7 +8398,7 @@ def get_tournament_bowling_leaders(payload: TournamentBowlingLeadersPayload):
             m.tournament_id = ?
             AND i.bowling_team IN ({placeholders})
         GROUP BY be.bowler_id
-        HAVING total_wickets >= 4
+        HAVING total_wickets >= 1
         ORDER BY strike_rate ASC
         LIMIT 10
     """, [tournament_id] + country_names)
